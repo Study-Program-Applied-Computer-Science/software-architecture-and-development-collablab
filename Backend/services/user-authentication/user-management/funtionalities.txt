@@ -1,0 +1,4 @@
+-Create: Registering a new user.
+-Read: Fetching user details.
+-Update: Modifying user profiles.
+-Delete: Removing user accounts.
