@@ -1,0 +1,2 @@
+-Enables recipe sharing via social media or shareable links.
+-Manages public recipe uploads.
