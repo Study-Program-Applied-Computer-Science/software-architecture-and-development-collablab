@@ -1,5 +1,5 @@
 <template>
-    <h1>UserAuth</h1>
+    <h1>UserProfile</h1>
   </template>
   
   <script>
