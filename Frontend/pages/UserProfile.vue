@@ -1,11 +1,12 @@
 <template>
-    <h1>UserProfile</h1>
+    <div>
+      <h1>Profile Page</h1>
+    </div>
   </template>
   
   <script>
-  
+  export default {
+    name: "ProfilePage",
+  };
   </script>
   
-  <style>
-  
-  </style>

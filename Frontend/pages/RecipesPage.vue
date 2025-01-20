@@ -1,11 +1,11 @@
 <template>
-  <h1>RecipesPage</h1>
-</template>
-
-<script>
-
-</script>
-
-<style>
-
-</style>
+    <div>
+      <h1>Recipes Page</h1>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    name: "RecipesPage",
+  };
+  </script>

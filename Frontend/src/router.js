@@ -3,8 +3,10 @@ import Router from "vue-router";
 
 import HomePage from "./pages/HomePage.vue";
 import SmartPantry from "./pages/SmartPantry.vue";
+import CreateRecipeform from "./pages/CreateRecipeform.vue";
 import RecipesPage from "./pages/RecipesPage.vue";
-import ProfilePage from "./pagess/ProfilePage.vue";
+import  UserProfile from "./pages/UserProfile.vue";
+import UserAuth from "./pages/UserAuth.vue";
 
 Vue.use(Router);
 
@@ -29,7 +31,17 @@ export default new Router({
     {
       path: "/profile",
       name: "profile",
-      component: ProfilePage,
+      component: UserProfile,
     },
+    {
+        path: "/login",
+        name: "login",
+        component: UserAuth,
+      },
+      {
+        path: "/recipeform",
+        name: "recipeform",
+        component: CreateRecipeform,
+      },
   ],
 });
