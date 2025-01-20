@@ -1,15 +1,5 @@
 <template>
   <div id="app">
-    <header>
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/recipes">Recipes</router-link>
-        <router-link to="/smartpantry">Smart Pantry</router-link>
-        <router-link to="/profile">Profile</router-link>
-        <router-link to="/login">Login</router-link>
-        <router-link to="/recipeform">Create Recipe</router-link>
-      </nav>
-    </header>
     <router-view />
   </div>
 </template>
