@@ -6,6 +6,7 @@ import CreateRecipeform from "./pages/CreateRecipeform.vue";
 import RecipesPage from "./pages/RecipesPage.vue";
 import  UserProfile from "./pages/UserProfile.vue";
 import UserAuth from "./pages/UserAuth.vue";
+import RecipeDetails from "./pages/RecipeDetails.vue";
 
 
 const routes= [
@@ -24,6 +25,9 @@ const routes= [
     name: "recipes",
     component: RecipesPage,
   },
+  { path: "/recipes/:id",
+    name: "recipedetails",
+    component: RecipeDetails },
   {
     path: "/profile",
     name: "profile",
