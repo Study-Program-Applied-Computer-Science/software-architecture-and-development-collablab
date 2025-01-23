@@ -4,7 +4,24 @@
     <div class="sectionHeading">
       <h1>Recipes</h1>
     </div>
-    <!-- filter ad searchcomes here -->
+    <!-- Filters Section -->
+    <div class="filters">
+      <select v-model="selectedCategory" @change="fetchRecipes">
+        <option value="">All Categories</option>
+        <option>Breakfast</option>
+        <option>Lunch</option>
+        <option>Dinner</option>
+        <option>Dessert</option>
+        <option>Snack</option>
+      </select>
+
+      <input
+        type="text"
+        v-model="searchQuery"
+        @input="fetchRecipes"
+        placeholder="Search recipes by title"
+      />
+    </div>
     <div class="product-grid">
       <RecipeCard
         v-for="recipe in recipes"
@@ -27,13 +44,23 @@ export default {
   data() {
     return {
       recipes: [],
+      selectedCategory: "", // Stores the selected category
+      searchQuery: "", // Stores the search input
       defaultImage: "https://via.placeholder.com/150", // Fallback image
     };
   },
   methods: {
     async fetchRecipes() {
       try {
-        const response = await axios.get("/recipes");
+        const params = {};
+        if (this.selectedCategory) {
+          params.category = this.selectedCategory;
+        }
+        if (this.searchQuery) {
+          params.search = this.searchQuery;
+        }
+
+        const response = await axios.get("/recipes", { params });
         this.recipes = response.data;
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -60,5 +87,15 @@ export default {
   margin-right: 6rem;
   margin-bottom: 3rem;
 }
-
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+select,
+input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
 </style>

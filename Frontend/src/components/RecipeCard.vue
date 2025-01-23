@@ -1,6 +1,6 @@
 <template>
   <div class="product-card">
-    <img :src="recipe.imageUrl || defaultImage" alt="Recipe Image" class="product-image" />    
+    <img :src="`http://localhost:5000${recipe.imageUrl}`" alt="Recipe Image" class="product-image" />    
     <h3 class="product-name">{{ recipe.title }}</h3>
     <p class="product-description">{{ recipe.category }}</p>
     <p class="product-description">{{ recipe.prepTime }}</p>

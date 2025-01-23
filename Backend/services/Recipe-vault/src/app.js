@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const recipeRoutes = require('./routes/recipes');
+const path = require("path");
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(cors());
 
 //routes
 app.use('/api/recipes', recipeRoutes);
+// Serve static files from the uploads folder
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {

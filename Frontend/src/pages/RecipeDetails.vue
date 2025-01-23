@@ -1,7 +1,7 @@
 <template>
   <div class="recipe-details">
     <h1>{{ recipe.title }}</h1>
-    <img :src="recipe.imageUrl || defaultImage" alt="Recipe Image" />
+    <img :src="`http://localhost:5000${recipe.imageUrl}`" alt="Recipe Image" />
     <div class="details">
       <p><strong>Category:</strong> {{ recipe.category }}</p>
       <p><strong>Prep Time:</strong> {{ recipe.prepTime }} minutes</p>
