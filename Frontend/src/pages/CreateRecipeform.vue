@@ -1,7 +1,7 @@
 <template>
   <div class="add-recipe">
     <h1>Add a New Recipe</h1>
-    <form @submit.prevent="submitRecipe">
+    <form @submit.prevent="submitRecipe" enctype="multipart/form-data">
       <div class="form-group">
         <label for="title">Title</label>
         <input type="text" v-model="recipe.title" id="title" required />
@@ -44,9 +44,13 @@
         <textarea v-model="recipe.instructions" id="instructions" required></textarea>
       </div>
 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="imageUrl">Image URL</label>
         <input type="text" v-model="recipe.imageUrl" id="imageUrl" />
+      </div> -->
+      <div class="form-group">
+        <label for="image">Upload Image</label>
+        <input type="file" @change="handleFileUpload" id="image" required />
       </div>
 
       <button type="submit">Add Recipe</button>
@@ -59,7 +63,7 @@ import axios from "@/api/index";
 
 export default {
   name: "CreateRecipeform",
-  data() {
+ data() {
     return {
       recipe: {
         title: "",
@@ -69,18 +73,34 @@ export default {
         category: "",
         ingredients: "",
         instructions: "",
-        imageUrl: "",
       },
+      imageFile: null, // Store the selected file
     };
   },
   methods: {
+    handleFileUpload(event) {
+      this.imageFile = event.target.files[0]; // Get the selected file
+    },
     async submitRecipe() {
       try {
-        const recipeData = {
-          ...this.recipe,
-          ingredients: this.recipe.ingredients.split(",").map((item) => item.trim()), // Split ingredients by commas
-        };
-        const response = await axios.post("/recipes", recipeData);
+        const formData = new FormData();
+        formData.append("title", this.recipe.title);
+        formData.append("description", this.recipe.description);
+        formData.append("servings", this.recipe.servings);
+        formData.append("prepTime", this.recipe.prepTime);
+        formData.append("category", this.recipe.category);
+        formData.append("ingredients", JSON.stringify(this.recipe.ingredients.split(",").map((item) => item.trim())));
+        formData.append("instructions", this.recipe.instructions);
+        if (this.imageFile) {
+          formData.append("image", this.imageFile); // Attach the file
+        }
+
+        const response = await axios.post("/recipes", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Important for file uploads
+          },
+        });
+
         console.log("Recipe added successfully:", response.data);
         alert("Recipe added successfully!");
         this.$router.push("/"); // Redirect to the recipes page

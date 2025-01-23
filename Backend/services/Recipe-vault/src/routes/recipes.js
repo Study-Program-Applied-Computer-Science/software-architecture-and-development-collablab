@@ -1,27 +1,68 @@
 const express = require('express');
+const multer = require("multer");
 const Recipe = require('../models/recipe');
 const router = express.Router();
 
-// Create a new recipe
-router.post('/', async (req, res) => {
-  try {
-    const recipe = new Recipe(req.body);
-    await recipe.save();
-    res.status(201).json(recipe);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads/"); // Directory to save uploaded images
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`); // Unique file name
+    },
+  });
 
-// Get all recipes
-router.get('/', async (req, res) => {
-  try {
-    const recipes = await Recipe.find(req.query); // Supports filtering via query params
-    res.status(200).json(recipes);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Multer upload middleware
+const upload = multer({ storage });  
+
+
+// Add a new recipe with image upload
+router.post("/", upload.single("image"), async (req, res) => {
+    try {
+      const { title, servings, ingredients, instructions, category, prepTime, description } = req.body;
+  
+      const newRecipe = new Recipe({
+        title,
+        servings,
+        ingredients: JSON.parse(ingredients), // Parse JSON string
+        instructions,
+        category,
+        prepTime,
+        description,
+        imageUrl: req.file ? `/uploads/${req.file.filename}` : null, // Save image path
+      });
+  
+      const savedRecipe = await newRecipe.save();
+      res.status(201).json(savedRecipe);
+    } catch (error) {
+      console.error("Error adding recipe:", error);
+      res.status(500).json({ message: "Failed to add recipe" });
+    }
+  });
+
+
+
+// Get all recipes with filtering and search
+router.get("/", async (req, res) => {
+    try {
+      const { category, search } = req.query;
+  
+      // Build a query object
+      const query = {};
+      if (category) {
+        query.category = category;
+      }
+      if (search) {
+        query.title = { $regex: search, $options: "i" }; // Case-insensitive search
+      }
+  
+      const recipes = await Recipe.find(query);
+      res.status(200).json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
 
 // Get a single recipe
 router.get('/:id', async (req, res) => {
