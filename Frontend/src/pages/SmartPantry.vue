@@ -1,4 +1,5 @@
 <template>
+<div><Navbar/>
   <div class="smart-pantry">
     <h1>Smart Pantry</h1>
     <p>Add the only ingredients you have and find recipes you can make!</p> &nbsp;
@@ -42,17 +43,19 @@
         />
       </div>
     </div>
-  </div>
+  </div></div>
 </template>
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
 import axios from "axios";
+import Navbar from "../components/Navbar"
 
 export default {
   name: "SmartPantry",
   components: {
     RecipeCard,
+    Navbar,    
   },
   data() {
     return {

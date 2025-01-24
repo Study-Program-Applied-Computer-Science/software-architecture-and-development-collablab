@@ -1,5 +1,7 @@
 <template>
   <div class="recipes-page">
+=======
+    <Navbar/>
     <div class="sectionHeading">
       <h1>Recipes</h1>
     </div>
@@ -34,10 +36,12 @@
 import axios from "@/api/index"; 
 import RecipeCard from "../components/RecipeCard.vue";
 
+import Navbar from "../components/Navbar.vue";
 export default {
   name: "RecipesPage",
   components: {
     RecipeCard,
+    Navbar,
   },
   data() {
     return {

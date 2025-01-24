@@ -1,21 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <header class="header">
-      <div class="container">
-        <div class="logo">LogoHere</div>
-        <nav>
-          <ul class="nav-links">
-            <li><router-link to="/">Home</router-link></li>
-            <li><router-link to="/recipes">Recipes</router-link></li>
-            <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
-            <li><router-link to="/profile">Profile</router-link></li>
-          </ul>
-        </nav>
-        <router-link to="/login" class="sign-in-button">Sign In</router-link>
-      </div>
-    </header>
-
+    <Navbar/>
     <!-- Hero Section -->
      <section class="hero">
     <div class="hero-content">
@@ -68,9 +54,12 @@
 
 <script>
 import CookingIllustration from "@/assets/cooking-illustration.png";
+import Navbar from "../components/Navbar.vue";
 
 export default {
   name: "HomePage",
+  components:{Navbar,
+  },
   data() {
     return {
       CookingIllustration,
@@ -170,14 +159,6 @@ body {
   text-decoration: none;
   color: #000;
   font-weight: 500;
-}
-.sign-in-button {
-  padding: 0.5rem 1rem;
-  background-color: orange;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
 }
 
 /* Hero Section */
