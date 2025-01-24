@@ -1,7 +1,7 @@
 <template>
   <div class="smart-pantry">
     <h1>Smart Pantry</h1>
-    <p>Add the ingredients you have and find recipes you can make!</p>
+    <p>Add the only ingredients you have and find recipes you can make!</p> &nbsp;
 
     <form @submit.prevent="searchRecipes">
       <div class="ingredients-input">
@@ -13,9 +13,9 @@
           placeholder="Enter ingredient"
           class="ingredient-input"
         />
-      </div>
-      <button type="button" @click="addIngredientField">Add More Ingredients</button>
-      <button type="submit">Search Recipes</button>
+      </div> <br>
+      <button class="secondryButton" type="button" @click="addIngredientField">Add More Ingredients</button>
+      <button class="primaryButton" type="submit">Search Recipes</button>
     </form>
 
     <div class="recipe-results">
@@ -84,20 +84,38 @@ export default {
 .smart-pantry {
   text-align: center;
   margin: 20px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .ingredients-input input {
   display: block;
   margin: 5px auto;
   padding: 8px;
-  width: 300px;
+  width: 450px;
+  height: 40px;
 }
 
 button {
   margin: 10px;
-  padding: 10px 15px;
+  padding: 10px 25px;
   cursor: pointer;
+  border-radius: 10px; /* Rounded corners */
+  border: none;
+  font-size: 16px;
 }
+
+button.primaryButton {
+  background-color: #ff8c00;
+  color: white;
+}
+
+button.secondryButton {
+  background-color: white;
+  color: #ff8c00;
+  border: 2px solid #FF8C00;
+}
+
+
 
 .recipe-results {
   margin-top: 20px;
