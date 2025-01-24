@@ -1,4 +1,5 @@
 <template>
+<div><Navbar/>
   <div class="add-recipe">
     <h1>Add a New Recipe</h1>
     <form @submit.prevent="submitRecipe" enctype="multipart/form-data">
@@ -55,14 +56,18 @@
 
       <button type="submit">Add Recipe</button>
     </form>
-  </div>
+  </div></div>
 </template>
 
 <script>
 import axios from "@/api/index";
+import Navbar from "../components/Navbar.vue";
 
 export default {
   name: "CreateRecipeform",
+  components: {
+    Navbar,    
+  },
  data() {
     return {
       recipe: {
