@@ -1,16 +1,18 @@
 <template>
   <div class="product-card">
-    <img :src="`http://localhost:5000${recipe.imageUrl}`" alt="Recipe Image" class="product-image" />    
+    <img 
+      :src="recipe.imageUrl ? `http://localhost:5000${recipe.imageUrl}` : defaultImage" 
+      alt="Recipe Image" 
+      class="product-image" 
+    />
     <h3 class="product-name">{{ recipe.title }}</h3>
     <p class="product-description">{{ recipe.category }}</p>
     <p class="product-description">{{ recipe.prepTime }}</p>
     <p class="product-description">{{ recipe.description }}</p>
-    <div class="buttonDiv">            
-        <button class="view-more-btn" @click="viewRecipe(recipe._id)">View More</button>   
-      
+    <div class="buttonDiv" v-if="showViewMore">
+      <button class="view-more-btn" @click="viewRecipe(recipe._id)">View More</button>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -21,6 +23,14 @@ export default {
       type: Object,
       required: true,
     },
+    viewRoute: {
+      type: String,
+      default: "/recipes", // Default view route for navigation
+    },
+    showViewMore: {
+      type: Boolean,
+      default: true, // Toggle for "View More" button
+    },
   },
   data() {
     return {
@@ -28,8 +38,8 @@ export default {
     };
   },
   methods: {
-    viewRecipe() {
-      this.$router.push(`/recipes/${this.recipe._id}`);
+    viewRecipe(recipeId) {
+      this.$router.push(`${this.viewRoute}/${recipeId}`);
     },
   },
 };
@@ -37,9 +47,8 @@ export default {
 
 <style scoped>
 .product-card {
-  width: 250px; /* Fixed width */
-  /* min-height: 400px; */ 
-  margin: 10px; /* Add spacing */
+  width: 250px;
+  margin: 10px;
   border: 1px solid #E67E00;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -74,6 +83,7 @@ export default {
 .buttonDiv {
   text-align: center;
 }
+
 .view-more-btn {
   background-color: #CC7000;
   color: white;
@@ -87,5 +97,5 @@ export default {
 .view-more-btn:hover {
   background-color: #733f00;
 }
-
 </style>
+

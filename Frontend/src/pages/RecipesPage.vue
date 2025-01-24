@@ -1,10 +1,8 @@
-  <template>
+<template>
   <div class="recipes-page">
-    <!-- navbar component -->
     <div class="sectionHeading">
       <h1>Recipes</h1>
     </div>
-    <!-- Filters Section -->
     <div class="filters">
       <select v-model="selectedCategory" @change="fetchRecipes">
         <option value="">All Categories</option>
@@ -29,13 +27,13 @@
         :recipe="recipe"
       />
     </div>
-    <!-- footer -->
   </div> 
 </template>
 
 <script>
-import axios from "@/api/index"; // Axios instance for API requests
+import axios from "@/api/index"; 
 import RecipeCard from "../components/RecipeCard.vue";
+
 export default {
   name: "RecipesPage",
   components: {
@@ -44,28 +42,23 @@ export default {
   data() {
     return {
       recipes: [],
-      selectedCategory: "", // Stores the selected category
-      searchQuery: "", // Stores the search input
-      defaultImage: "https://via.placeholder.com/150", // Fallback image
+      selectedCategory: "",
+      searchQuery: "",
     };
   },
   methods: {
     async fetchRecipes() {
       try {
         const params = {};
-        if (this.selectedCategory) {
-          params.category = this.selectedCategory;
-        }
-        if (this.searchQuery) {
-          params.search = this.searchQuery;
-        }
+        if (this.selectedCategory) params.category = this.selectedCategory;
+        if (this.searchQuery) params.search = this.searchQuery;
 
         const response = await axios.get("/recipes", { params });
         this.recipes = response.data;
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }
-    },    
+    },
   },
   mounted() {
     this.fetchRecipes();
@@ -74,18 +67,15 @@ export default {
 </script>
 
 <style scoped>
-.sectionHeading{
-    text-align: center;
-    padding: 1rem;
+.sectionHeading {
+  text-align: center;
+  padding: 1rem;
 }
-  .product-grid {
+.product-grid {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: space-evenly;
-  margin-left: 6rem;
-  margin-right: 6rem;
-  margin-bottom: 3rem;
 }
 .filters {
   display: flex;

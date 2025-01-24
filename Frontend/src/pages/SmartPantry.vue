@@ -23,10 +23,12 @@
       <p v-if="loading">Loading recipes...</p>
       <p v-if="!loading && recipes.length === 0">No recipes found.</p>
       <div v-if="recipes.length > 0" class="results-container">
-        <SmartPantryCard
+        <!-- Always show the View More button -->
+        <RecipeCard
           v-for="recipe in recipes"
           :key="recipe._id"
           :recipe="recipe"
+          :showViewMore="true" 
         />
       </div>
     </div>
@@ -34,13 +36,13 @@
 </template>
 
 <script>
-import SmartPantryCard from "../components/SmartPantryCard.vue";
+import RecipeCard from "../components/RecipeCard.vue";
 import axios from "axios";
 
 export default {
   name: "SmartPantry",
   components: {
-    SmartPantryCard,
+    RecipeCard,
   },
   data() {
     return {
