@@ -3,6 +3,8 @@ New Micro Service: "Recipe Reactions and Comments Microservice"
 Brief: This microservice will handle reactions and comments, including anonymous displays, 
 tied to recipes posted by users.
 
+complexity: Easy and Unique that will be a responsible microservice - Can be developed in 2 days
+
 What It Does
 This microservice enables users to:
 React (like, love, etc.) to a recipe.
@@ -44,5 +46,9 @@ It shouldn't be added to User management service or any other existing service
 --Reactions and comments are more related to the recipe or Social or content domain, not user identity. 
 Keeping these concerns separate service makes your architecture cleaner and easier to maintain.
 
+
+review done
+
 --Waiting for final review
+
 
