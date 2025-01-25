@@ -1,0 +1,46 @@
+New Micro Service: "Recipe Reactions and Comments Microservice"
+
+Brief: This microservice will handle reactions and comments, including anonymous displays, 
+tied to recipes posted by users.
+
+What It Does
+This microservice enables users to:
+React (like, love, etc.) to a recipe.
+Leave comments on recipes.
+View all reactions and comments for a recipe (comments shown anonymously to other users).
+Aggregate and display reaction counts (e.g., "15 Likes, 10 Loves").
+
+Why its important:
+-Since our app is user-centric and if users like others ideas they should appreciate them since
+those ideas made their day.
+
+Core Features (CRUD Operations)
+Create:
+
+Allow users to react to a recipe (like, love, etc.).
+Allow users to post comments on recipes.
+Read:
+
+Fetch all reactions with counts for a specific recipe.
+Fetch all comments for a recipe, anonymized for other users.
+Update:
+
+Modify a user's reaction (e.g., change "like" to "love"). (This feature can be accessbile to admin and user)
+Edit a user's comment.
+Delete:
+
+Remove a user's reaction or comment.
+
+
+Explanation to professor:
+
+If Gunjan or other professors asks why it Should be a different microservice because:
+
+It shouldn't be added to User management service or any other existing service
+--For example if we take User management should strictly handle authentication, user profiles, roles, and other user-related operations.
+--If we take User Authentication Should only work with registration, Authentication and Authorization.
+--If we take Recipe Vault it should handle crud of recipes and smart pantry and this new service will disturb the quality of pure and major crud.
+
+--Reactions and comments are more related to the recipe or Social or content domain, not user identity. 
+Keeping these concerns separate service makes your architecture cleaner and easier to maintain.
+
