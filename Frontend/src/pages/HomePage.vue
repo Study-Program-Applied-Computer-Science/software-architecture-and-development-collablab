@@ -16,7 +16,7 @@
     <!-- Features Section -->
      <section class="features">
     <div class="feature-content">
-      <img :src="CookingIllustration" alt="Cooking Illustration" class="feature-image" />
+      <img :src="Homepagepic" alt="Cooking Illustration" class="feature-image" />
       <div class="feature-text">
         <h2>All in One Recipe Management System For You</h2>
         <p>
@@ -53,16 +53,17 @@
 </template>
 
 <script>
-import CookingIllustration from "@/assets/cooking-illustration.png";
+import Homepagepic from "@/assets/Homepagepic.png";
 import Navbar from "../components/Navbar.vue";
 
 export default {
   name: "HomePage",
-  components:{Navbar,
+  components: {
+    Navbar,
   },
   data() {
     return {
-      CookingIllustration,
+      Homepagepic,
     };
   },
 };
@@ -165,7 +166,11 @@ body {
 .hero {
   text-align: center;
   padding: 4rem 2rem;
-  background-color: #f9f9f9;
+  background-image: url("@/assets/background-image.png"); /* Adjust the path if necessary */
+  background-size: cover; /* Ensures the image covers the entire section */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  color: #fff; /* Adjust text color for better contrast */
 }
 .hero h1 {
   font-size: 2.5rem;
