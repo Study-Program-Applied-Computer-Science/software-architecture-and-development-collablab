@@ -164,22 +164,46 @@ body {
 
 /* Hero Section */
 .hero {
+  position: relative;
   text-align: center;
-  padding: 4rem 2rem;
-  background-image: url("@/assets/background-image.png"); /* Adjust the path if necessary */
-  background-size: cover; /* Ensures the image covers the entire section */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
-  color: #fff; /* Adjust text color for better contrast */
+  padding: 6rem 2rem; /* Adjust padding for better spacing */
+  background-image: url("@/assets/background-image.png"); /* Use correct image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff; /* Text color remains white for contrast */
 }
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay with opacity */
+  z-index: 1; /* Overlay below the text */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2; /* Bring text above the overlay */
+  max-width: 800px; /* Limit the width of the content */
+  margin: 0 auto; /* Center content horizontally */
+  text-align: center;
+}
+
 .hero h1 {
-  font-size: 2.5rem;
+  font-size: 2.5rem; /* Adjust font size */
   margin-bottom: 1rem;
+  font-weight: bold; /* Enhance text readability */
 }
+
 .hero p {
   font-size: 1.2rem;
   margin-bottom: 2rem;
 }
+
 .hero-button {
   background-color: orange;
   padding: 0.75rem 1.5rem;
@@ -188,6 +212,11 @@ body {
   border-radius: 5px;
   font-size: 1rem;
   font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.hero-button:hover {
+  background-color: darkorange;
 }
 
 /* Features Section */
