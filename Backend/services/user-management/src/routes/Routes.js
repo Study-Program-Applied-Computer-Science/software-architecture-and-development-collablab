@@ -3,6 +3,18 @@ const User = require('../models/User');
 const Ingredient = require('../models/Ingredient');
 const router = express.Router();
 
+
+// Middleware to check if the user is an admin
+const isAdmin = (req, res, next) => {
+  
+  if (req.user && req.user.role === "admin") {
+    next(); 
+  } else {
+    res.status(403).json({ message: "Access denied. Admins only." });
+  }
+};
+
+
 // Delete User
 router.delete('/user/:id', async (req, res) => {
   try {
@@ -14,27 +26,19 @@ router.delete('/user/:id', async (req, res) => {
   }
 });
 
-// Edit Ingredient
-router.put('/ingredient/:id', async (req, res) => {
+// Edit user
+router.put('/user/:id', async (req, res) => {
   try {
-    const updatedIngredient = await Ingredient.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updatedIngredient) return res.status(404).json({ message: 'Ingredient not found' });
-    res.status(200).json(updatedIngredient);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Delete Ingredient
-router.delete('/ingredient/:id', async (req, res) => {
-  try {
-    const deletedIngredient = await Ingredient.findByIdAndDelete(req.params.id);
-    if (!deletedIngredient) return res.status(404).json({ message: 'Ingredient not found' });
-    res.status(200).json({ message: 'Ingredient deleted successfully' });
+    const { id } = req.params; 
+    const updatedData = req.body; 
+    const updatedUser = await User.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({
+      message: 'User updated successfully',
+      user: updatedUser,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
