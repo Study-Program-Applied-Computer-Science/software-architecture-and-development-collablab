@@ -9,7 +9,7 @@
     <p class="product-description">{{ recipe.category }}</p>
     <p class="product-description">{{ recipe.prepTime }}</p>
     <p class="product-description">{{ recipe.description }}</p>
-    <div class="buttonDiv" v-if="showViewMore">
+    <div class="buttonDiv">
       <button class="view-more-btn" @click="viewRecipe(recipe._id)">View More</button>
     </div>
   </div>
@@ -26,11 +26,7 @@ export default {
     viewRoute: {
       type: String,
       default: "/recipes", // Default view route for navigation
-    },
-    showViewMore: {
-      type: Boolean,
-      default: true, // Toggle for "View More" button
-    },
+    },    
   },
   data() {
     return {

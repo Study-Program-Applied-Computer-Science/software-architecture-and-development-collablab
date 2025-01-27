@@ -38,8 +38,7 @@
         <RecipeCard
           v-for="recipe in recipes"
           :key="recipe._id"
-          :recipe="recipe"
-          :showViewMore="true"
+          :recipe="recipe"          
         />
       </div>
     </div>
