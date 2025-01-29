@@ -43,16 +43,26 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+  console.log('Login attempt:', { email, password }); // Debug statement
+
   try {
     let user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found'); // Debug statement
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
+    console.log('User found:', user); // Debug statement
+
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password comparison result:', isMatch); // Debug statement
+
     if (!isMatch) {
+      console.log('Password does not match'); // Debug statement
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
+
+    console.log('Password matches'); // Debug statement
 
     const payload = {
       user: {
@@ -76,7 +86,12 @@ exports.login = async (req, res) => {
 };
 
 exports.verifyToken = async (req, res) => {
-  const token = req.header('x-auth-token');
+  const authHeader = req.header('Authorization');
+  if (!authHeader) {
+    return res.status(401).json({ msg: 'No token, authorization denied' });
+  }
+
+  const token = authHeader.split(' ')[1];
   if (!token) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
@@ -84,7 +99,7 @@ exports.verifyToken = async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
-    res.json({ msg: 'Token is valid' });
+    res.json({ msg: 'Token is valid', user: req.user });
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });
   }

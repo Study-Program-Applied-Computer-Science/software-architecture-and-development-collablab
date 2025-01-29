@@ -4,8 +4,16 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/register', register);
-router.post('/login', login);
+router.post('/register', (req, res, next) => {
+  console.log('Register request body:', req.body); // Debug statement
+  next();
+}, register);
+
+router.post('/login', (req, res, next) => {
+  console.log('Login request body:', req.body); // Debug statement
+  next();
+}, login);
+
 router.get('/verify', authMiddleware, verifyToken);
 
 module.exports = router;
