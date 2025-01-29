@@ -1,0 +1,14 @@
+Idea 2 : Recipe Analytics Service
+
+Recipe Analytics Service will track and analyze user interactions with recipes, offering insights into popularity, user preferences, and trends. It acts as a bridge to measure engagement metrics without duplicating recipe or user data.
+
+
+2. Implementation Plan
+Backend
+1.	Endpoint for Generating Reports: Create an endpoint (GET /admin/report) that:
+o	Fetches analytics data from the database.
+o	Formats the data into an Excel file.
+o	Returns the file as a downloadable attachment.
+2.	Endpoint for Deleting Logs: Create an endpoint (DELETE /admin/logs) that:
+o	Clears the analytics collection in the database.
+o	Optionally logs the deletion action for auditing.
