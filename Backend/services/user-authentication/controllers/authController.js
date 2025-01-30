@@ -6,14 +6,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
   try {
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ msg: 'User already exists' });
     }
 
-    user = new User({ username, email, password });
+    user = new User({ username, email, password, role });
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
@@ -23,6 +23,7 @@ exports.register = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        role: user.role, // Include role in the payload
       },
     };
 
@@ -67,6 +68,7 @@ exports.login = async (req, res) => {
     const payload = {
       user: {
         id: user.id,
+        role: user.role, // Include role in the payload
       },
     };
 
@@ -103,4 +105,8 @@ exports.verifyToken = async (req, res) => {
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });
   }
+};
+
+exports.logout = (req, res) => {
+  res.json({ msg: 'User logged out' });
 };

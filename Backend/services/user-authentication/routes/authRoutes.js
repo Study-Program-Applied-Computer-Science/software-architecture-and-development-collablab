@@ -1,6 +1,7 @@
 const express = require('express');
-const { register, login, verifyToken } = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { register, login, verifyToken, logout } = require('../controllers/authController');
+const authenticate = require('../middleware/authMiddleware');
+const authorize = require('../middleware/authorize');
 
 const router = express.Router();
 
@@ -14,6 +15,17 @@ router.post('/login', (req, res, next) => {
   next();
 }, login);
 
-router.get('/verify', authMiddleware, verifyToken);
+router.get('/verify', authenticate, verifyToken);
+
+// Protect routes with role-based access control
+router.get('/admin', authenticate, authorize('admin'), (req, res) => {
+  res.json({ msg: 'Welcome, admin!' });
+});
+
+router.get('/user', authenticate, authorize('user'), (req, res) => {
+  res.json({ msg: 'Welcome, user!' });
+});
+
+router.post('/logout', authenticate, logout);
 
 module.exports = router;
