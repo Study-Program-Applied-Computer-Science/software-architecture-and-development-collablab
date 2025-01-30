@@ -15,3 +15,11 @@ export const authClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Analytics API (Port 5003)
+export const analyticsClient = axios.create({
+  baseURL: "http://localhost:5003/api/analytics",
+  headers: {
+    "Content-Type": "application/json",
+    },
+    });
