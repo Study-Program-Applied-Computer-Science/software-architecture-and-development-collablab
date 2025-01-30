@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 
-const analyticsSchema = new mongoose.Schema({
-  recipeId: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe", required: true },
-  views: { type: Number, default: 0 },
-  logs: [
-    {
-      date: { type: Date, default: Date.now },
-      action: { type: String, required: true },
-    },
-  ],
+const logSchema = new mongoose.Schema({
+  action: String,
+  date: Date,
+  userId: String, // Change to String if userId should be a string
 });
 
-module.exports = mongoose.model("Analytics", analyticsSchema);
+const recipeAnalyticsSchema = new mongoose.Schema({
+  recipeId: mongoose.Types.ObjectId,
+  views: Number,
+  logs: [logSchema],
+});
+
+module.exports = mongoose.model("RecipeAnalytics", recipeAnalyticsSchema);

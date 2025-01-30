@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const analyticsRoutes = require("./routes");
-const path = require("path");
 
 dotenv.config();
 
@@ -20,10 +19,15 @@ app.use("/api/analytics", analyticsRoutes);
 app.get("/", (req, res) => res.send("Recipe Analytics API"));
 
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI,)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // Start server
 const PORT = process.env.PORT || 5003;
