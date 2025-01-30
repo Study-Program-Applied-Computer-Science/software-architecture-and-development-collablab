@@ -7,6 +7,7 @@ const analyticsSchema = new mongoose.Schema({
     {
       date: { type: Date, default: Date.now },
       action: { type: String, required: true },
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     },
   ],
 });
