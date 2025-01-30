@@ -16,6 +16,7 @@
         </div>
         <button type="submit">Login</button>
       </form>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       <p>
         Don't have an account? <router-link to="/signup">Signup</router-link>
       </p>
@@ -32,24 +33,38 @@ export default {
     return {
       username: "",
       password: "",
+      errorMessage: "",
     };
   },
   methods: {
     async login() {
+      this.errorMessage = ""; 
       try {
         const response = await authClient.post("/login", {
-          email: this.username, // Assuming email as login identifier
+          username: this.username,
           password: this.password,
         });
-        console.log("Login successful:", response.data);
 
-        // Save token to localStorage or cookie
-        localStorage.setItem("authToken", response.data.token);
+        if (response && response.data.token) {
+          console.log("Login successful:", response.data);
 
-        // Redirect to home or dashboard
-        this.$router.push("/");
+          // Save token to localStorage
+          localStorage.setItem("authToken", response.data.token);
+          
+          alert("Login successful! Redirecting...");
+          
+          // Redirect to homepage or dashboard
+          this.$router.push("/");
+        } else {
+          throw new Error("Unexpected response from server");
+        }
       } catch (error) {
-        console.error("Login failed:", error.response.data);
+        console.error("Login failed:", error);
+        if (error.response) {
+          this.errorMessage = error.response.data.msg || "Login failed. Check your credentials.";
+        } else {
+          this.errorMessage = "Server error. Please try again later.";
+        }
       }
     },
   },
@@ -57,7 +72,6 @@ export default {
 </script>
 
 <style scoped>
-/* Use the same styles as Signup.vue */
 .auth-container {
   display: flex;
   align-items: center;
@@ -88,5 +102,10 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
 </style>

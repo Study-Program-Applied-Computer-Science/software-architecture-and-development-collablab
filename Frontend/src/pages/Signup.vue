@@ -20,6 +20,7 @@
         </div>
         <button type="submit">Signup</button>
       </form>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       <p>
         Already have an account? <router-link to="/login">Login</router-link>
       </p>
@@ -37,20 +38,33 @@ export default {
       username: "",
       email: "",
       password: "",
+      errorMessage: "",
     };
   },
   methods: {
     async signup() {
+      this.errorMessage = ""; // Clear previous errors
       try {
         const response = await authClient.post("/register", {
           username: this.username,
           email: this.email,
           password: this.password,
         });
-        console.log("Signup successful:", response.data);
-        this.$router.push("/login");
+
+        if (response && response.data) {
+          console.log("Signup successful:", response.data);
+          alert("Signup successful! Redirecting to login...");
+          this.$router.push("/login"); // Redirect to login page
+        } else {
+          throw new Error("Unexpected response from server");
+        }
       } catch (error) {
-        console.error("Signup failed:", error.response.data);
+        console.error("Signup failed:", error);
+        if (error.response) {
+          this.errorMessage = error.response.data.msg || "Signup failed. Please try again.";
+        } else {
+          this.errorMessage = "Server error. Please check your connection.";
+        }
       }
     },
   },
@@ -88,5 +102,10 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
 }
 </style>

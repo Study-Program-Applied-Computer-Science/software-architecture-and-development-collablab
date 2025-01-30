@@ -39,7 +39,7 @@ export default {
     logout() {
       localStorage.removeItem("authToken"); // Remove token
       this.isAuthenticated = false; // Update UI state
-      this.$router.push("/login"); // Redirect to login page
+      this.$router.push("/"); // Redirect to home page
     },
   },
   mounted() {
