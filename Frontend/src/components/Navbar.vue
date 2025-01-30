@@ -8,6 +8,7 @@
           <li><router-link to="/recipes">Recipes</router-link></li>
           <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
           <li><router-link to="/profile">Profile</router-link></li>
+          <li><router-link to="/adminAnalytics">Analytics</router-link></li>
         </ul>
       </nav>
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require("multer");
 const Recipe = require('../models/recipe');
+const axios = require("axios");
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -135,6 +136,29 @@ router.post('/search-by-ingredients', async (req, res) => {
     } catch (error) {
       console.error('Error searching recipes:', error);
       return res.status(500).json({ message: 'Error fetching recipes', error });
+    }
+  });
+
+  // Request to the Analytics microservice to log the view. This ensures that every time a recipe is fetched, the view is logged in the Analytics microservice.
+  router.get("/:id", async (req, res) => {
+    const recipeId = req.params.id;
+    const userId = req.query.userId || null; // Optional: User ID if logged in
+  
+    try {
+      // Fetch the recipe
+      const recipe = await Recipe.findById(recipeId);
+      if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+  
+      // Log the view to the Analytics microservice
+      await axios.post("http://localhost:5003/api/analytics/log-view", {
+        recipeId,
+        userId,
+      });
+  
+      res.status(200).json(recipe);
+    } catch (error) {
+      console.error("Error fetching recipe:", error);
+      res.status(500).json({ message: "Failed to fetch recipe", error });
     }
   });
   

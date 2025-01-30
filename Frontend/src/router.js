@@ -8,6 +8,7 @@ import UserProfile from "./pages/UserProfile.vue";
 import RecipeDetails from "./pages/RecipeDetails.vue";
 import LogIn from "./pages/Login.vue";
 import SignUp from "./pages/Signup.vue";
+import AdminAnalytics from "./pages/adminAnalytics.vue";
 
 const routes = [
   {
@@ -45,6 +46,12 @@ const routes = [
     path: "/signup",
     name: "signup",
     component: SignUp,
+  },
+  {
+    path: "/adminanalytics",
+    name: "adminanalytics",
+    component: AdminAnalytics,
+    meta: { requiresAuth: true, isAdmin: true }, // Optional: Add guards for admin-only access
   }
 ];
 

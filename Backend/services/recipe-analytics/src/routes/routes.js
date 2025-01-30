@@ -43,4 +43,33 @@ router.delete("/admin/logs", async (req, res) => {
   }
 });
 
+// Log Recipe View
+router.post("/log-view", async (req, res) => {
+  const { recipeId, userId } = req.body;
+
+  try {
+    // Check if analytics record exists for the recipe
+    let record = await RecipeAnalytics.findOne({ recipeId });
+
+    if (!record) {
+      // Create a new analytics record if it doesn't exist
+      record = new RecipeAnalytics({
+        recipeId,
+        views: 1,
+        logs: [{ action: "view", date: new Date(), userId }],
+      });
+    } else {
+      // Update the existing record
+      record.views += 1;
+      record.logs.push({ action: "view", date: new Date(), userId });
+    }
+
+    await record.save();
+    res.status(200).json({ message: "View logged successfully", record });
+  } catch (error) {
+    console.error("Error logging view:", error);
+    res.status(500).json({ message: "Failed to log view", error });
+  }
+});
+
 module.exports = router;
