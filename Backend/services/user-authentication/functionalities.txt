@@ -1,2 +1,0 @@
--Secure user registration, login, and authentication.
--Handles user-specific data like saved recipes and pantry items.

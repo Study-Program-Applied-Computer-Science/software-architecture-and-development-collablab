@@ -1,6 +1,5 @@
 <template>
   <div class="recipes-page">
-=======
     <Navbar/>
     <div class="sectionHeading">
       <h1>Recipes</h1>
@@ -33,7 +32,7 @@
 </template>
 
 <script>
-import axios from "@/api/index"; 
+import { apiClient } from "@/api/index";
 import RecipeCard from "../components/RecipeCard.vue";
 
 import Navbar from "../components/Navbar.vue";
@@ -57,7 +56,7 @@ export default {
         if (this.selectedCategory) params.category = this.selectedCategory;
         if (this.searchQuery) params.search = this.searchQuery;
 
-        const response = await axios.get("/recipes", { params });
+        const response = await apiClient.get("/recipes", { params });
         this.recipes = response.data;
       } catch (error) {
         console.error("Error fetching recipes:", error);

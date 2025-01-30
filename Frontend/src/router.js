@@ -4,12 +4,12 @@ import HomePage from "./pages/HomePage.vue";
 import SmartPantry from "./pages/SmartPantry.vue";
 import CreateRecipeform from "./pages/CreateRecipeform.vue";
 import RecipesPage from "./pages/RecipesPage.vue";
-import  UserProfile from "./pages/UserProfile.vue";
-import UserAuth from "./pages/UserAuth.vue";
+import UserProfile from "./pages/UserProfile.vue";
 import RecipeDetails from "./pages/RecipeDetails.vue";
+import LogIn from "./pages/Login.vue";
+import SignUp from "./pages/Signup.vue";
 
-
-const routes= [
+const routes = [
   {
     path: "/",
     name: "home",
@@ -25,24 +25,27 @@ const routes= [
     name: "recipes",
     component: RecipesPage,
   },
-  { path: "/recipes/:id",
-    name: "recipedetails",
-    component: RecipeDetails },
+  { path: "/recipes/:id", name: "recipedetails", component: RecipeDetails },
   {
     path: "/profile",
     name: "profile",
     component: UserProfile,
   },
   {
-      path: "/login",
-      name: "login",
-      component: UserAuth,
-    },
-    {
-      path: "/recipeform",
-      name: "recipeform",
-      component: CreateRecipeform,
-    },
+    path: "/recipeform",
+    name: "recipeform",
+    component: CreateRecipeform,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LogIn,
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignUp,
+  }
 ];
 
 const router = createRouter({

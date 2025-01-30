@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import axios from "@/api/index";
+import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
 
 export default {
@@ -100,7 +100,7 @@ export default {
           formData.append("image", this.imageFile); // Attach the file
         }
 
-        const response = await axios.post("/recipes", formData, {
+        const response = await apiClient.post("/recipes", formData, {
           headers: {
             "Content-Type": "multipart/form-data", // Important for file uploads
           },

@@ -1,27 +1,58 @@
 <template>
-    <header class="header">
-      <div class="container">
-        <div class="logo">LogoHere</div>
-        <nav>
-          <ul class="nav-links">
-            <li><router-link to="/">Home</router-link></li>
-            <li><router-link to="/recipes">Recipes</router-link></li>
-            <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
-            <li><router-link to="/profile">Profile</router-link></li>
-          </ul>
-        </nav>
-        <router-link to="/login" class="sign-in-button">Sign In</router-link>
-      </div>
-    </header>
+  <header class="header">
+    <div class="container">
+      <div class="logo">LogoHere</div>
+      <nav>
+        <ul class="nav-links">
+          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/recipes">Recipes</router-link></li>
+          <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
+          <li><router-link to="/profile">Profile</router-link></li>
+        </ul>
+      </nav>
+
+      <!-- Conditionally show "Sign In" or "Sign Out" -->
+      <button v-if="isAuthenticated" @click="logout" class="sign-out-button">
+        Sign Out
+      </button>
+      <router-link v-else to="/login" class="sign-in-button">
+        Sign In
+      </router-link>
+    </div>
+  </header>
 </template>
+
 <script>
 export default {
   name: "NavbarComponent",
-  
-  
+  data() {
+    return {
+      isAuthenticated: false, // Tracks if the user is logged in
+    };
+  },
+  methods: {
+    checkAuthStatus() {
+      const token = localStorage.getItem("authToken"); // Check if token exists
+      this.isAuthenticated = !!token; // Convert token presence to boolean
+    },
+    logout() {
+      localStorage.removeItem("authToken"); // Remove token
+      this.isAuthenticated = false; // Update UI state
+      this.$router.push("/login"); // Redirect to login page
+    },
+  },
+  mounted() {
+    this.checkAuthStatus(); // Check authentication status when the component loads
+  },
+  watch: {
+    "$route"() {
+      this.checkAuthStatus(); // Update authentication state on route changes
+    },
+  },
 };
 </script>
-<style>
+
+<style scoped>
 .header {
   background: #fff;
   padding: 1rem 2rem;
@@ -46,27 +77,23 @@ export default {
   color: #000;
   font-weight: 500;
 }
-.button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  color: white;
-  background-color: orange;
+.sign-in-button,
+.sign-out-button {
+  padding: 0.5rem 1rem;
   border-radius: 5px;
   font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.button.outline {
-  background: none;
-  color: orange;
-  border: 2px solid orange;
-}
 .sign-in-button {
-  padding: 0.5rem 1rem;
   background-color: orange;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
+  color: white;
+}
+
+.sign-out-button {
+  background-color: red;
+  color: white;
+  border: none;
 }
 </style>

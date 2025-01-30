@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from "@/api/index";
+import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
 
 export default {
@@ -57,7 +57,7 @@ export default {
   async created() {
     const recipeId = this.$route.params.id; // Get recipe ID from URL
     try {
-      const response = await axios.get(`/recipes/${recipeId}`);
+      const response = await apiClient.get(`/recipes/${recipeId}`);
       this.recipe = response.data; // Store recipe data in the component state
     } catch (error) {
       console.error("Error fetching recipe details:", error);

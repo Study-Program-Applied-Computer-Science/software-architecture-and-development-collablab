@@ -47,7 +47,7 @@
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
-import axios from "axios";
+import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar"
 
 export default {
@@ -73,7 +73,7 @@ export default {
     async searchRecipes() {
       this.loading = true;
       try {
-        const response = await axios.post(
+        const response = await apiClient.post(
           `${process.env.VUE_APP_API_URL}/api/recipes/search-by-ingredients`,
           {
             ingredients: this.ingredients
