@@ -1,73 +1,121 @@
 <template>
-<div><Navbar/>
-  <div class="recipe-details">
-    <!-- Recipe Image -->
-    <div class="image-container">
-      <img :src="recipe.imageUrl ? `http://localhost:5000${recipe.imageUrl}` : defaultImage" alt="Recipe Image" />
-    </div>
+  <div>
+    <Navbar />
+    <div class="recipe-details">
+      <!-- Recipe Image -->
+      <div class="image-container">
+        <img :src="recipe.imageUrl ? `http://localhost:5000${recipe.imageUrl}` : defaultImage" alt="Recipe Image" />
+      </div>
 
-    <!-- Recipe Information -->
-    <div class="info-container">
-      <div class="recipe-info">
-        <h2>{{ recipe.title }}</h2>
-        <p><strong>Recipe Category:</strong> {{ recipe.category }}</p>
-        <p><strong>Servings:</strong> {{ recipe.servings }} Persons</p>
-        <p><strong>Cooking Time:</strong> {{ recipe.prepTime }} Minutes</p>
+      <!-- Recipe Information -->
+      <div class="info-container">
+        <div class="recipe-info">
+          <h2>{{ recipe.title }}</h2>
+          <p><strong>Recipe Category:</strong> {{ recipe.category }}</p>
+          <p><strong>Servings:</strong> {{ recipe.servings }} Persons</p>
+          <p><strong>Cooking Time:</strong> {{ recipe.prepTime }} Minutes</p>
+        </div>
+        <div class="description">
+          <h3>Item Description</h3>
+          <p>{{ recipe.description }}</p>
+        </div>
       </div>
-      <div class="description">
-        <h3>Item Description</h3>
-        <p>{{ recipe.description }}</p>
-      </div>
-    </div>
 
-    <!-- Recipe Ingredients and Instructions -->
-    <div class="details-container">
-      <div class="ingredients">
-        <h3>Recipe Ingredients</h3>
-        <ul>
-          <li v-for="ingredient in recipe.ingredients" :key="ingredient">
-            {{ ingredient }}
-          </li>
-        </ul>
-      </div>
-      <div class="instructions">
-        <h3>Cooking Instructions</h3>
-        <p>{{ recipe.instructions }}</p>
+      <!-- Recipe Ingredients and Instructions -->
+      <div class="details-container">
+        <div class="ingredients">
+          <h3>Recipe Ingredients</h3>
+          <ul>
+            <li v-for="ingredient in recipe.ingredients" :key="ingredient">
+              {{ ingredient }}
+            </li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h3>Cooking Instructions</h3>
+          <p>{{ recipe.instructions }}</p>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
 <script>
 import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
+import axios from "axios";
 
 export default {
   name: "RecipeDetails",
-  components: {
-    Navbar,    
-  },
+  components: { Navbar },
+
   data() {
     return {
-      recipe: {}, // Holds the details of the recipe
-      defaultImage: "https://via.placeholder.com/400", // Fallback image
+      recipe: {},
+      defaultImage: "https://via.placeholder.com/400",
     };
   },
+
   async created() {
-    const recipeId = this.$route.params.id; // Get recipe ID from URL
+    // Retrieve recipeId from URL
+    const recipeId = this.$route.params.id;
+    if (!recipeId) {
+      console.error("Missing recipe ID");
+      return;
+    }
+
     try {
+      // Fetch Recipe Details
       const response = await apiClient.get(`/recipes/${recipeId}`);
-      this.recipe = response.data; // Store recipe data in the component state
+      this.recipe = response.data;
+
+      // Plan-1 if user doesnot exist we can use this dummy user
+      this.setupDummyUser();
+
+      // Here it logs recipie views
+      this.logRecipeView(recipeId);
     } catch (error) {
       console.error("Error fetching recipe details:", error);
     }
   },
+
+  methods: {
+    setupDummyUser() {
+      let userId = localStorage.getItem("userId");
+      if (!userId) {
+        const dummyUsers = ["user123", "user456", "user789"];
+        userId = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
+        localStorage.setItem("userId", userId);
+        console.log("Assigned Dummy User ID:", userId);
+      }
+    },
+
+    async logRecipeView(recipeId) {
+  const userId = localStorage.getItem("userId") || "guest";
+
+  console.log("🔍 Logging Recipe View:", { recipeId, userId });
+
+  if (!recipeId || !userId) {
+    console.error("Cannot log view, missing recipeId or userId");
+    return;
+  }
+
+  try {
+    const response = await axios.post("http://localhost:5003/api/analytics/log-view", {
+      recipeId,
+      userId,
+    });
+
+    console.log("Successfully logged view:", response.data);
+  } catch (error) {
+    console.error("Failed to log view:", error.response?.data || error);
+  }
+}
+  }
 };
 </script>
 
 <style scoped>
-/* Overall Page Styling */
 .recipe-details {
   max-width: 900px;
   margin: 35px auto;
@@ -80,7 +128,6 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Image Section */
 .image-container {
   text-align: center;
   margin-bottom: 20px;
@@ -93,7 +140,6 @@ export default {
   border: 2px solid #ddd;
 }
 
-/* Info Section */
 .info-container {
   display: flex;
   justify-content: space-between;
@@ -122,7 +168,6 @@ export default {
   font-weight: bold;
 }
 
-/* Ingredients and Instructions Section */
 .details-container {
   display: flex;
   justify-content: space-between;
@@ -150,7 +195,6 @@ export default {
   line-height: 1.5;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .info-container, .details-container {
     flex-direction: column;

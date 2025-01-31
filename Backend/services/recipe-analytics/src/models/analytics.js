@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const logSchema = new mongoose.Schema({
   action: String,
   date: Date,
-  userId: String, // Change to String if userId should be a string
+  userId: String,
 });
 
 const recipeAnalyticsSchema = new mongoose.Schema({
