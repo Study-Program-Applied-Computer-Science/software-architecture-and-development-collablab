@@ -7,8 +7,8 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/recipes">Recipes</router-link></li>
           <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
-          <li><router-link to="/profile">Profile</router-link></li>
-          <li><router-link to="/adminAnalytics">Analytics</router-link></li>
+          <li v-if="isAuthenticated & userRole === 'user'"><router-link to="/profile">Profile</router-link></li>
+          <li v-if="isAuthenticated & userRole === 'admin'"><router-link to="/adminAnalytics">Admin Dashboard</router-link></li>
         </ul>
       </nav>
 
@@ -24,30 +24,40 @@
 </template>
 
 <script>
+import { jwtDecode } from "jwt-decode";
+
 export default {
   name: "NavbarComponent",
   data() {
     return {
-      isAuthenticated: false, // Tracks if the user is logged in
+      isAuthenticated: false,
+      userRole: null,
     };
   },
   methods: {
     checkAuthStatus() {
-      const token = localStorage.getItem("authToken"); // Check if token exists
-      this.isAuthenticated = !!token; // Convert token presence to boolean
+      const token = localStorage.getItem("authToken");
+      this.isAuthenticated = !!token;
+
+      if (token) {
+        const decodedToken = jwtDecode(token);
+        this.userRole = decodedToken.user.role;
+      }
     },
     logout() {
-      localStorage.removeItem("authToken"); // Remove token
-      this.isAuthenticated = false; // Update UI state
-      this.$router.push("/"); // Redirect to home page
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userRole");
+      this.isAuthenticated = false;
+      this.userRole = null;
+      this.$router.push("/login");
     },
   },
   mounted() {
-    this.checkAuthStatus(); // Check authentication status when the component loads
+    this.checkAuthStatus();
   },
   watch: {
     "$route"() {
-      this.checkAuthStatus(); // Update authentication state on route changes
+      this.checkAuthStatus();
     },
   },
 };

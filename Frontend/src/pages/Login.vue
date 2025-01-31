@@ -26,6 +26,7 @@
 
 <script>
 import { authClient } from "@/api/index";
+import { jwtDecode } from "jwt-decode";
 
 export default {
     name: "LogIn",
@@ -50,6 +51,9 @@ export default {
 
           // Save token to localStorage
           localStorage.setItem("authToken", response.data.token);
+          const decodedToken = jwtDecode(response.data.token); // Ensure correct function usage
+          const userRole = decodedToken.user.role;
+          localStorage.setItem("userRole", userRole);
           
           alert("Login successful! Redirecting...");
           
