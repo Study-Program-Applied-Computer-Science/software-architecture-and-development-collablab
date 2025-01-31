@@ -1,10 +1,10 @@
 {
   "name": "recipe-analytics",
   "version": "1.0.0",
-  "main": "src/routes/app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node src/routes/app.js",
-    "dev": "nodemon src/routes/app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "author": "",
   "license": "ISC",

@@ -142,7 +142,7 @@ router.post('/search-by-ingredients', async (req, res) => {
   // Request to the Analytics microservice to log the view. This ensures that every time a recipe is fetched, the view is logged in the Analytics microservice.
   router.get("/:id", async (req, res) => {
     const recipeId = req.params.id;
-    const userId = req.query.userId || null; // Optional: User ID if logged in
+    const userId = req.query.userId || null;
   
     try {
       // Fetch the recipe
