@@ -9,6 +9,7 @@ import RecipeDetails from "./pages/RecipeDetails.vue";
 import LogIn from "./pages/Login.vue";
 import SignUp from "./pages/Signup.vue";
 import AdminAnalytics from "./pages/adminAnalytics.vue";
+import adminMain from "./pages/adminMain.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -33,6 +34,12 @@ const routes = [
     path: "/adminanalytics", 
     name: "adminanalytics", 
     component: AdminAnalytics,
+    meta: { requiresAuth: true, requiresAdmin: true }, // Only admins can access
+  },
+  { 
+    path: "/admin", 
+    name: "admin", 
+    component: adminMain,
     meta: { requiresAuth: true, requiresAdmin: true }, // Only admins can access
   }
 ];

@@ -9,6 +9,8 @@
           <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
           <li v-if="isAuthenticated & userRole === 'user'"><router-link to="/profile">Profile</router-link></li>
           <li v-if="isAuthenticated & userRole === 'admin'"><router-link to="/adminAnalytics">Admin Dashboard</router-link></li>
+          <li v-if="isAuthenticated & userRole === 'admin'"><router-link to="/admin">Admin</router-link></li>
+          
         </ul>
       </nav>
 
