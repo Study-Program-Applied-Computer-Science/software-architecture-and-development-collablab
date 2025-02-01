@@ -1,25 +1,56 @@
 <template>
   <div class="auth-container">
+    <!-- Left Section with Image -->
     <div class="auth-image">
-      <img src="../assets/signin.png" alt="Login" />
+      <img src="../assets/signin.png" alt="Login Illustration" />
     </div>
-    <div class="auth-form">
-      <h2>Login</h2>
-      <form @submit.prevent="login">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" v-model="username" required />
+
+    <!-- Right Section with Login Form -->
+    <div class="auth-form-container">
+      <div class="auth-form">
+        <div class="form-header">
+          <router-link to="/">
+            <img src="../assets/back.png" alt="Back Arrow" />
+          </router-link>
+          <h2>Login</h2>
         </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p>
-        Don't have an account? <router-link to="/signup">Signup</router-link>
-      </p>
+
+        <form class="formWidth" @submit.prevent="login">
+          <!-- Username Field -->
+          <div class="form-group">
+            <input
+              type="text"
+              id="username"
+              v-model="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <input
+              type="password"
+              id="password"
+              v-model="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          <!-- Login Button -->
+          <button type="submit">Login</button>
+        </form>
+
+        <!-- Error Message -->
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+        <!-- Footer -->
+        <p>
+          Don't have an account?
+          <router-link to="/signup">Sign Up Now!</router-link>
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -29,7 +60,7 @@ import { authClient } from "@/api/index";
 import { jwtDecode } from "jwt-decode";
 
 export default {
-    name: "LogIn",
+  name: "LogIn",
   data() {
     return {
       username: "",
@@ -39,7 +70,7 @@ export default {
   },
   methods: {
     async login() {
-      this.errorMessage = ""; 
+      this.errorMessage = ""; // Clear previous errors
       try {
         const response = await authClient.post("/login", {
           username: this.username,
@@ -51,24 +82,19 @@ export default {
 
           // Save token to localStorage
           localStorage.setItem("authToken", response.data.token);
-          const decodedToken = jwtDecode(response.data.token); // Ensure correct function usage
+          const decodedToken = jwtDecode(response.data.token);
           const userRole = decodedToken.user.role;
           localStorage.setItem("userRole", userRole);
-          
+
           alert("Login successful! Redirecting...");
-          
-          // Redirect to homepage or dashboard
-          this.$router.push("/");
+          this.$router.push("/"); // Redirect to homepage
         } else {
           throw new Error("Unexpected response from server");
         }
       } catch (error) {
         console.error("Login failed:", error);
-        if (error.response) {
-          this.errorMessage = error.response.data.msg || "Login failed. Check your credentials.";
-        } else {
-          this.errorMessage = "Server error. Please try again later.";
-        }
+        this.errorMessage =
+          error.response?.data?.msg || "Login failed. Please try again.";
       }
     },
   },
@@ -78,38 +104,125 @@ export default {
 <style scoped>
 .auth-container {
   display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Left Section */
+.auth-image {
+  flex: 1;
+  background-color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
-
 .auth-image img {
-  max-width: 100%;
+  max-width: 80%;
   height: auto;
+  object-fit: contain;
+}
+.formWidth{
+  width: 100%;
+}
+/* Right Section */
+.auth-form-container {
+  flex: 1;
+  background-color: #F3C5B6; /* Light Orange */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Form Styling */
 .auth-form {
+  width: 80%;
   max-width: 400px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-header img {
+  width: 1.1rem;
+  height: 1.4rem;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  margin-right: 32px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+input:focus {
+  outline: none;
+  border-color: #e67e22;
+  box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
 }
 
 button {
-  background-color: #007bff;
+  width: 100%;
+  background-color: #C23C13; /* Orange */
   color: white;
-  padding: 10px 15px;
+  padding: 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
+
+button:hover {
+  background-color: #A23210; /* Darker Orange */
+}
+
+p {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+
+p a {
+  color: #C23C13;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
 .error-message {
   color: red;
-  font-size: 14px;
+  font-size: 0.9rem;
   margin-top: 10px;
+  text-align: center;
 }
 </style>
