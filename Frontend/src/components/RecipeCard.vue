@@ -7,10 +7,21 @@
     />
     <h3 class="product-name">{{ recipe.title }}</h3>
     <p class="product-description">{{ recipe.category }}</p>
-    <p class="product-description">{{ recipe.prepTime }}</p>
+    <p class="product-description">{{ recipe.prepTime }} min</p>
     <p class="product-description">{{ recipe.description }}</p>
+
     <div class="buttonDiv">
-      <button class="view-more-btn" @click="viewRecipe(recipe._id)">View More</button>
+      <button v-if="mode === 'recipes'" class="view-more-btn" @click="viewRecipe(recipe._id)">
+        View More
+      </button>
+      
+      <button v-if="mode === 'profile'" class="edit-btn" @click="$emit('edit', recipe._id)">
+        Edit
+      </button>
+      
+      <button v-if="mode === 'profile'" class="delete-btn" @click="$emit('delete', recipe._id)">
+        Delete
+      </button>
     </div>
   </div>
 </template>
@@ -23,19 +34,19 @@ export default {
       type: Object,
       required: true,
     },
-    viewRoute: {
+    mode: {
       type: String,
-      default: "/recipes", // Default view route for navigation
-    },    
+      default: "recipes", // Default mode is "recipes" (View More button)
+    },
   },
   data() {
     return {
-      defaultImage: "https://via.placeholder.com/150", // Fallback image
+      defaultImage: "https://via.placeholder.com/150",
     };
   },
   methods: {
     viewRecipe(recipeId) {
-      this.$router.push(`${this.viewRoute}/${recipeId}`);
+      this.$router.push(`/recipes/${recipeId}`);
     },
   },
 };
@@ -80,7 +91,7 @@ export default {
   text-align: center;
 }
 
-.view-more-btn {
+.view-more-btn, .edit-btn, .delete-btn {
   background-color: #CC7000;
   color: white;
   border: none;
@@ -88,10 +99,16 @@ export default {
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin: 5px;
 }
 
 .view-more-btn:hover {
   background-color: #733f00;
 }
+.edit-btn {
+  background-color: #007bff;
+}
+.delete-btn {
+  background-color: red;
+}
 </style>
-

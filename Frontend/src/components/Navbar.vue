@@ -7,14 +7,19 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/recipes">Recipes</router-link></li>
           <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
-          <li v-if="isAuthenticated & userRole === 'user'"><router-link to="/profile">Profile</router-link></li>
-          <li v-if="isAuthenticated & userRole === 'admin'"><router-link to="/adminAnalytics">Admin Dashboard</router-link></li>
-          <li v-if="isAuthenticated & userRole === 'admin'"><router-link to="/admin">Admin</router-link></li>
-          
+          <li v-if="isAuthenticated && userRole === 'user'">
+            <router-link to="/profile">Profile</router-link>
+          </li>
+          <li v-if="isAuthenticated && userRole === 'admin'">
+            <router-link to="/admin">manage users</router-link>
+          </li>
+          <li v-if="isAuthenticated && userRole === 'admin'">
+            <router-link to="/adminanalytics">Analytics</router-link>
+          </li>
         </ul>
       </nav>
 
-      <!-- Conditionally show "Sign In" or "Sign Out" -->
+      <!-- Sign In / Sign Out Button -->
       <button v-if="isAuthenticated" @click="logout" class="sign-out-button">
         Sign Out
       </button>
@@ -64,7 +69,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .header {
   background: #fff;

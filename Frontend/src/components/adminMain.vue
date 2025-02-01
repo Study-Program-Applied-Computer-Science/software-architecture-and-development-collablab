@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar.vue";
+import Navbar from "./Navbar.vue";
 
 export default {
   name: "adminMain",

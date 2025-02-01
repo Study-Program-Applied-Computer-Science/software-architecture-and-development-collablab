@@ -10,6 +10,11 @@ const recipeSchema = new mongoose.Schema({
   instructions: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   imageUrl: { type: String },
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "User", 
+    required: true // Ensure every recipe is linked to a user
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Recipe', recipeSchema);
