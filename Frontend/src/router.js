@@ -9,7 +9,7 @@ import RecipeDetails from "./pages/RecipeDetails.vue";
 import LogIn from "./pages/Login.vue";
 import SignUp from "./pages/Signup.vue";
 import AdminAnalytics from "./pages/adminAnalytics.vue";
-import adminMain from "./components/adminMain.vue";
+import adminMain from "./pages/adminMain.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
