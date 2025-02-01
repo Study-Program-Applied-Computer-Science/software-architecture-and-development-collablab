@@ -2,7 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const RecipeAnalytics = require("../models/analytics");
 const excel = require("xlsx");
-const app = require("../app");
+const authMiddleware = require("../middleware/authMiddleware");
+const dotenv = require("dotenv");
+// const app = require("../app"); //undo comment if server is not running
 
 const router = express.Router();
 
