@@ -4,13 +4,15 @@ const RecipeAnalytics = require("../models/analytics");
 const excel = require("xlsx");
 const authMiddleware = require("../middleware/authMiddleware");
 const dotenv = require("dotenv");
-// const app = require("../app"); //undo comment if server is not running
+
+dotenv.config();
 
 const router = express.Router();
 
 // Log a View api endpoint
-router.post("/log-view", async (req, res) => {
-  const { recipeId, userId } = req.body;
+router.post("/log-view", authMiddleware, async (req, res) => {
+  const { recipeId } = req.body;
+  const userId = req.user.id;
 
   if (!recipeId || !userId) {
     return res.status(400).json({ message: "Recipe ID and User ID are required" });
@@ -38,24 +40,18 @@ router.post("/log-view", async (req, res) => {
   }
 });
 
-// Generate Excel Report api endpoint
-router.get("/admin/report", async (req, res) => {
+
+// Restrict Access to Analytics Dashboard for users
+router.get("/admin/report", authMiddleware, async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+
   try {
     const analyticsData = await RecipeAnalytics.find();
-
     if (!analyticsData.length) {
       return res.status(404).json({ message: "No analytics data available." });
     }
-    
-    // //fetch recipe names
-    // const recipeIds = analyticsData.map((item) => item.recipeId);
-    // const recipes = await Recipe.find({ _id: { $in: recipeIds } }).select("_id name");
-
-    // //handling missu=ing recipe names
-    // const recipeMap = {};
-    // recipes.forEach(recipe => {
-    //   recipeMap[recipe._id.toString()] = recipe.name || "Unknown Recipe";
-    // });
 
     // Format data for report
     const formattedData = analyticsData.map((item) => ({
@@ -68,44 +64,54 @@ router.get("/admin/report", async (req, res) => {
     if (!formattedData.length) {
       return res.status(404).json({ message: "No valid analytics data found." });
     }
-     
-    // From here excel report will be generated
-    const workbook = excel.utils.book_new();
-    const worksheet = excel.utils.json_to_sheet(formattedData);
-    excel.utils.book_append_sheet(workbook, worksheet, "Analytics");
+  
 
-    const buffer = excel.write(workbook, { bookType: "xlsx", type: "buffer" });
 
-    res.setHeader("Content-Disposition", "attachment; filename=analytics-report.xlsx");
-    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+ // Generate Excel report endpoint
+ const workbook = excel.utils.book_new();
+ const worksheet = excel.utils.json_to_sheet(formattedData);
+ excel.utils.book_append_sheet(workbook, worksheet, "Analytics");
 
-    res.status(200).send(buffer);
-  } catch (error) {
-    console.error("Error generating report:", error);
-    res.status(500).json({ message: "Error generating report", error: error.message });
-  }
+ const buffer = excel.write(workbook, { bookType: "xlsx", type: "buffer" });
+
+ res.setHeader("Content-Disposition", "attachment; filename=analytics-report.xlsx");
+ res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+ res.status(200).send(buffer);
+} catch (error) {
+ console.error("Error generating report:", error);
+ res.status(500).json({ message: "Error generating report", error: error.message });
+}
 });
 
-// Endpoint for check for Logs 
-router.get("/admin/logs/check", async (req, res) => {
-  try {
-    const logsCount = await RecipeAnalytics.countDocuments({ "logs.0": { $exists: true } });
-    res.status(200).json({ logsCount });
-  } catch (error) {
-    console.error("Error checking logs:", error);
-    res.status(500).json({ message: "Failed to check logs", error: error.message });
-  }
+// Check for Logs endpoint is only accessible for admin
+router.get("/admin/logs/check", authMiddleware, async (req, res) => {
+if (req.user.role !== "admin") {
+ return res.status(403).json({ message: "Access denied. Admins only." });
+}
+
+try {
+ const logsCount = await RecipeAnalytics.countDocuments({ "logs.0": { $exists: true } });
+ res.status(200).json({ logsCount });
+} catch (error) {
+ console.error("Error checking logs:", error);
+ res.status(500).json({ message: "Failed to check logs", error: error.message });
+}
 });
 
-// Endpoint for delete Logs
-router.delete("/admin/logs", async (req, res) => {
-  try {
-    const result = await RecipeAnalytics.deleteMany({});
-    res.json({ message: "Analytics logs deleted successfully", deletedCount: result.deletedCount });
-  } catch (error) {
-    console.error("Error deleting logs:", error);
-    res.status(500).json({ message: "Failed to delete logs", error: error.message });
-  }
+//Delete Logs endpoint only by admin 
+router.delete("/admin/logs", authMiddleware, async (req, res) => {
+if (req.user.role !== "admin") {
+ return res.status(403).json({ message: "Access denied. Admins only." });
+}
+
+try {
+ const result = await RecipeAnalytics.deleteMany({});
+ res.json({ message: "Analytics logs deleted successfully", deletedCount: result.deletedCount });
+} catch (error) {
+ console.error("Error deleting logs:", error);
+ res.status(500).json({ message: "Failed to delete logs", error: error.message });
+}
 });
 
 module.exports = router;
