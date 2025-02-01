@@ -9,6 +9,7 @@ import RecipeDetails from "./pages/RecipeDetails.vue";
 import LogIn from "./pages/Login.vue";
 import SignUp from "./pages/Signup.vue";
 import AdminAnalytics from "./pages/adminAnalytics.vue";
+import adminMain from "./components/adminMain.vue";
 
 const routes = [
   { path: "/", name: "home", component: HomePage },
@@ -27,12 +28,19 @@ const routes = [
     component: CreateRecipeform,
     meta: { requiresAuth: true }, //  Only logged-in users can create recipes
   },
+  { path: "/recipeform/:id", name: "editrecipe", component: CreateRecipeform },
   { path: "/login", name: "login", component: LogIn },
   { path: "/signup", name: "signup", component: SignUp },
   { 
     path: "/adminanalytics", 
     name: "adminanalytics", 
     component: AdminAnalytics,
+    meta: { requiresAuth: true, requiresAdmin: true }, // Only admins can access
+  },
+  { 
+    path: "/admin", 
+    name: "admin", 
+    component: adminMain,
     meta: { requiresAuth: true, requiresAdmin: true }, // Only admins can access
   }
 ];

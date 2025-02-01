@@ -1,62 +1,60 @@
 <template>
-<div><Navbar/>
-  <div class="add-recipe">
-    <h1>Add a New Recipe</h1>
-    <form @submit.prevent="submitRecipe" enctype="multipart/form-data">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" v-model="recipe.title" id="title" required />
-      </div>
+  <div>
+    <Navbar />
+    <div class="add-recipe">
+      <h1>{{ isEditing ? "Edit Recipe" : "Add a New Recipe" }}</h1>
+      <form @submit.prevent="submitRecipe" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" v-model="recipe.title" id="title" required />
+        </div>
 
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea v-model="recipe.description" id="description" required></textarea>
-      </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea v-model="recipe.description" id="description" required></textarea>
+        </div>
 
-      <div class="form-group">
-        <label for="servings">Servings</label>
-        <input type="text" v-model="recipe.servings" id="servings" required />
-      </div>
+        <div class="form-group">
+          <label for="servings">Servings</label>
+          <input type="text" v-model="recipe.servings" id="servings" required />
+        </div>
 
-      <div class="form-group">
-        <label for="prepTime">Preparation Time (minutes)</label>
-        <input type="number" v-model="recipe.prepTime" id="prepTime" required />
-      </div>
+        <div class="form-group">
+          <label for="prepTime">Preparation Time (minutes)</label>
+          <input type="number" v-model="recipe.prepTime" id="prepTime" required />
+        </div>
 
-      <div class="form-group">
-        <label for="category">Category</label>
-        <select v-model="recipe.category" id="category" required>
-          <option disabled value="">Select a category</option>
-          <option>Breakfast</option>
-          <option>Lunch</option>
-          <option>Dinner</option>
-          <option>Dessert</option>
-          <option>Snack</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select v-model="recipe.category" id="category" required>
+            <option disabled value="">Select a category</option>
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Dessert</option>
+            <option>Snack</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="ingredients">Ingredients (comma-separated)</label>
-        <input type="text" v-model="recipe.ingredients" id="ingredients" required />
-      </div>
+        <div class="form-group">
+          <label for="ingredients">Ingredients (comma-separated)</label>
+          <input type="text" v-model="recipe.ingredients" id="ingredients" required />
+        </div>
 
-      <div class="form-group">
-        <label for="instructions">Instructions</label>
-        <textarea v-model="recipe.instructions" id="instructions" required></textarea>
-      </div>
+        <div class="form-group">
+          <label for="instructions">Instructions</label>
+          <textarea v-model="recipe.instructions" id="instructions" required></textarea>
+        </div>
 
-      <!-- <div class="form-group">
-        <label for="imageUrl">Image URL</label>
-        <input type="text" v-model="recipe.imageUrl" id="imageUrl" />
-      </div> -->
-      <div class="form-group">
-        <label for="image">Upload Image</label>
-        <input type="file" @change="handleFileUpload" id="image" required />
-      </div>
+        <div class="form-group">
+          <label for="image">Upload Image</label>
+          <input type="file" @change="handleFileUpload" id="image" />
+        </div>
 
-      <button type="submit">Add Recipe</button>
-    </form>
-  </div></div>
+        <button type="submit">{{ isEditing ? "Update Recipe" : "Add Recipe" }}</button>
+      </form>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -64,12 +62,12 @@ import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
 
 export default {
-  name: "CreateRecipeform",
-  components: {
-    Navbar,    
-  },
- data() {
+  name: "CreateRecipeForm",
+  components: { Navbar },
+  data() {
     return {
+      isEditing: false,
+      recipeId: null,
       recipe: {
         title: "",
         description: "",
@@ -79,41 +77,80 @@ export default {
         ingredients: "",
         instructions: "",
       },
-      imageFile: null, // Store the selected file
+      imageFile: null,
     };
   },
+  async mounted() {
+    this.recipeId = this.$route.params.id; // Check if there's an ID in the URL
+    if (this.recipeId) {
+      this.isEditing = true;
+      await this.loadRecipeData(); // Fetch existing recipe data
+    }
+  },
   methods: {
-    handleFileUpload(event) {
-      this.imageFile = event.target.files[0]; // Get the selected file
-    },
-    async submitRecipe() {
+    async loadRecipeData() {
       try {
-        const formData = new FormData();
-        formData.append("title", this.recipe.title);
-        formData.append("description", this.recipe.description);
-        formData.append("servings", this.recipe.servings);
-        formData.append("prepTime", this.recipe.prepTime);
-        formData.append("category", this.recipe.category);
-        formData.append("ingredients", JSON.stringify(this.recipe.ingredients.split(",").map((item) => item.trim())));
-        formData.append("instructions", this.recipe.instructions);
-        if (this.imageFile) {
-          formData.append("image", this.imageFile); // Attach the file
-        }
-
-        const response = await apiClient.post("/recipes", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data", // Important for file uploads
-          },
+        const token = localStorage.getItem("authToken");
+        const response = await apiClient.get(`/recipes/${this.recipeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Recipe added successfully:", response.data);
-        alert("Recipe added successfully!");
-        this.$router.push("/"); // Redirect to the recipes page
+        const recipe = response.data;
+        this.recipe.title = recipe.title;
+        this.recipe.description = recipe.description;
+        this.recipe.servings = recipe.servings;
+        this.recipe.prepTime = recipe.prepTime;
+        this.recipe.category = recipe.category;
+        this.recipe.ingredients = recipe.ingredients.join(", ");
+        this.recipe.instructions = recipe.instructions;
       } catch (error) {
-        console.error("Error adding recipe:", error);
-        alert("Failed to add recipe. Please try again.");
+        console.error("Error fetching recipe data:", error);
       }
     },
+    handleFileUpload(event) {
+      this.imageFile = event.target.files[0];
+    },
+    async submitRecipe() {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      alert("You must be logged in to update a recipe.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", this.recipe.title);
+    formData.append("description", this.recipe.description);
+    formData.append("servings", this.recipe.servings);
+    formData.append("prepTime", this.recipe.prepTime);
+    formData.append("category", this.recipe.category);
+    formData.append("ingredients", JSON.stringify(this.recipe.ingredients.split(",").map(item => item.trim())));
+    formData.append("instructions", this.recipe.instructions);
+    if (this.imageFile) {
+      formData.append("image", this.imageFile);
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`, // Ensure token is sent
+      "Content-Type": "multipart/form-data",
+    };
+
+    if (this.isEditing) {
+      await apiClient.put(`/recipes/${this.recipeId}`, formData, { headers });
+      alert("Recipe updated successfully!");
+      
+    } else {
+      await apiClient.post("/recipes", formData, { headers });
+      alert("Recipe added successfully!");
+    }
+
+    this.$router.push("/recipes");
+  } catch (error) {
+    console.error("Error submitting recipe:", error);
+    alert(error.response?.data?.message || "Failed to submit recipe.");
+  }
+},
   },
 };
 </script>

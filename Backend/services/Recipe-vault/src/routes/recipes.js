@@ -3,6 +3,7 @@ const multer = require("multer");
 const Recipe = require('../models/recipe');
 const axios = require("axios");
 const router = express.Router();
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -17,31 +18,30 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });  
 
 
-// Add a new recipe with image upload
-router.post("/", upload.single("image"), async (req, res) => {
-    try {
-      const { title, servings, ingredients, instructions, category, prepTime, description } = req.body;
-  
-      const newRecipe = new Recipe({
-        title,
-        servings,
-        ingredients: JSON.parse(ingredients), // Parse JSON string
-        instructions,
-        category,
-        prepTime,
-        description,
-        imageUrl: req.file ? `/uploads/${req.file.filename}` : null, // Save image path
-      });
-  
-      const savedRecipe = await newRecipe.save();
-      res.status(201).json(savedRecipe);
-    } catch (error) {
-      console.error("Error adding recipe:", error);
-      res.status(500).json({ message: "Failed to add recipe" });
-    }
-  });
+//Create recipe (Only logged-in users)
+router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
+  try {
+    const { title, description, servings, prepTime, category, ingredients, instructions } = req.body;
 
+    const newRecipe = new Recipe({
+      title,
+      description,
+      servings,
+      prepTime,
+      category,
+      ingredients: JSON.parse(ingredients),
+      instructions, 
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+      userId: req.user.id, // Store user ID in the recipe document
+    });
 
+    const savedRecipe = await newRecipe.save();
+    res.status(201).json(savedRecipe);
+  } catch (error) {
+    console.error("Error adding recipe:", error);
+    res.status(500).json({ message: "Failed to add recipe" });
+  }
+});
 
 // Get all recipes with filtering and search
 router.get("/", async (req, res) => {
@@ -76,25 +76,75 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update a recipe
-router.put('/:id', async (req, res) => {
+// Edit Recipe (Only Owner or Admin)
+router.put("/:id", authMiddleware, upload.single("image"), async (req, res) => {
+  
   try {
-    const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!recipe) return res.status(404).json({ message: 'Recipe not found' });
-    res.status(200).json(recipe);
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+
+    // Ensure only owner or admin can edit
+    if (recipe.userId.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to edit this recipe" });
+    }
+
+    // Construct updated recipe data
+    const updatedData = {
+      title: req.body.title,
+      description: req.body.description,
+      servings: req.body.servings,
+      prepTime: req.body.prepTime,
+      category: req.body.category,
+      ingredients: JSON.parse(req.body.ingredients), // Parse back from JSON string
+      instructions: req.body.instructions,
+    };
+
+    if (req.file) {
+      updatedData.imageUrl = `/uploads/${req.file.filename}`; // Update image if new file is uploaded
+    }
+
+    // Ensure correct update
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { $set: updatedData },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json(updatedRecipe);
   } catch (error) {
+    console.error("Update Error:", error);
     res.status(400).json({ message: error.message });
   }
 });
 
-// Delete a recipe
-router.delete('/:id', async (req, res) => {
+
+
+
+// Delete Recipe (Only Owner or Admin)
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
-    const recipe = await Recipe.findByIdAndDelete(req.params.id);
-    if (!recipe) return res.status(404).json({ message: 'Recipe not found' });
-    res.status(200).json({ message: 'Recipe deleted successfully' });
+    const recipe = await Recipe.findById(req.params.id);
+    if (!recipe) return res.status(404).json({ message: "Recipe not found" });
+
+    //Ensure only owner or admin can delete
+    if (recipe.userId.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this recipe" });
+    }
+
+    await Recipe.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Recipe deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+//Get only the recipes created by the logged-in user
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ userId: req.user.id }); // Filter by logged-in user
+    res.status(200).json(recipes);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching recipes" });
   }
 });
 
