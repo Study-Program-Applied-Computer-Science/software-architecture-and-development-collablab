@@ -33,7 +33,7 @@ export default {
   async mounted() {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await apiClient.get("/recipes", {
+      const response = await apiClient.get("/", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -73,7 +73,7 @@ export default {
         return;
       }
 
-      await apiClient.delete(`/recipes/${recipeId}`, {
+      await apiClient.delete(`/${recipeId}`, {
         headers: { Authorization: `Bearer ${token}` }, // Ensure token is sent
       });
 

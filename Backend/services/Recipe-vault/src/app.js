@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const cors = require('cors');
+//const cors = require('cors');
 const recipeRoutes = require('./routes/recipes');
 const path = require("path");
 
@@ -12,7 +12,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //Parse URL-encoded form data
-app.use(cors());
+//app.use(cors());
 
 //routes
 app.use('/api/recipes', recipeRoutes);

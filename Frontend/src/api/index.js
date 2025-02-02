@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Recipe Vault API (Port 5000)
 export const apiClient = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "http://localhost:5005/api/recipes",
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,7 +10,7 @@ export const apiClient = axios.create({
 
 // Authentication API (Port 5002)
 export const authClient = axios.create({
-  baseURL: "http://localhost:5002/api/auth",
+  baseURL: "http://localhost:5005/api/auth",
   headers: {
     "Content-Type": "application/json",
   },
@@ -18,10 +18,10 @@ export const authClient = axios.create({
 
 // Analytics API (Port 5003)
 export const analyticsClient = axios.create({
-  baseURL: "http://localhost:5003/api/analytics",
+  baseURL: "http://localhost:5005/api/analytics",
   headers: {
     "Content-Type": "application/json",
-    },
-    });
+  },
+});
 
-  
+

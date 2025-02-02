@@ -74,7 +74,7 @@ export default {
       this.loading = true;
       try {
         const response = await apiClient.post(
-          `${process.env.VUE_APP_API_URL}/api/recipes/search-by-ingredients`,
+          "/search-by-ingredients",
           {
             ingredients: this.ingredients
               .filter((ingredient) => ingredient.trim() !== "") // Remove empty strings
@@ -102,8 +102,7 @@ export default {
 .smart-pantry {
   text-align: center;
   margin: 20px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-}
+  }
 
 .ingredients-input {
   display: flex;

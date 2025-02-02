@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('../config/db');
-const cors = require("cors");
+//const cors = require("cors");
 const authRoutes = require('../routes/authRoutes'); // Adjust the path as needed
 
 dotenv.config();
@@ -14,7 +14,7 @@ connectDB();
 // Middleware
 app.use(express.json()); // Ensure this line is present to parse JSON requests
 
-app.use(cors({ origin: "http://localhost:8080", credentials: true }));
+//app.use(cors({ origin: "http://localhost:8080", credentials: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
