@@ -3,15 +3,25 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const dotenv = require('dotenv');
+const logger = require('../../services/logging'); // Import the logger
+const { correlationIdMiddleware } = require('../../services/correlationId'); // Import the correlation ID middleware
 
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 
+// Middleware to generate or retrieve correlation IDs
+app.use(correlationIdMiddleware);
+
 // Custom middleware to log requests
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.originalUrl}`);
+  logger.info({
+    message: 'Incoming request',
+    method: req.method,
+    url: req.originalUrl,
+    correlationId: req.headers['x-correlation-id'] || 'N/A'
+  });
   next();
 });
 
@@ -34,5 +44,5 @@ app.use('/api/user', createProxyMiddleware({ target: process.env.USER_SERVICE, c
 // Start the server
 const PORT = process.env.PORT || 5005;
 app.listen(PORT, () => {
-  console.log(`API Gateway running on port ${PORT}`);
+  logger.info(`API Gateway running on port ${PORT}`);
 });

@@ -4,19 +4,21 @@
     "description": "API Gateway for routing requests to microservices",
     "main": "app.js",
     "scripts": {
-      "start": "node app.js",
-      "dev": "nodemon app.js"
+        "start": "node app.js",
+        "dev": "nodemon app.js"
     },
     "dependencies": {
-      "express": "^4.18.2",
-      "http-proxy-middleware": "^2.0.6",
-      "dotenv": "^16.0.3",
-      "express-rate-limit": "^6.7.0"
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "express-rate-limit": "^6.7.0",
+        "http-proxy-middleware": "^2.0.6",
+        "winston": "^3.17.0",
+        "winston-elasticsearch": "^0.11.0"
     },
     "devDependencies": {
-      "nodemon": "^3.1.9"
+        "nodemon": "^3.1.9"
     },
     "engines": {
-      "node": ">=14.0.0"
+        "node": ">=14.0.0"
     }
-  }
+}
