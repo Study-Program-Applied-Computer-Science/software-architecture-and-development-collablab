@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import { apiClient } from "@/api/index";
+import { apiClient, analyticsClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
-import axios from "axios";
+
 
 export default {
   name: "RecipeDetails",
@@ -66,7 +66,7 @@ export default {
 
     try {
       // Fetch Recipe Details
-      const response = await apiClient.get(`/recipes/${recipeId}`);
+      const response = await apiClient.get(`/${recipeId}`);
       this.recipe = response.data;
 
       // Plan-1 if user doesnot exist we can use this dummy user
@@ -99,9 +99,8 @@ export default {
     console.error("Cannot log view, missing recipeId or userId");
     return;
   }
-
   try {
-    const response = await axios.post("http://localhost:5003/api/analytics/log-view", {
+    const response = await analyticsClient.post("/log-view", {
       recipeId,
       userId,
     });

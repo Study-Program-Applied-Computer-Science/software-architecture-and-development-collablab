@@ -91,7 +91,7 @@ export default {
     async loadRecipeData() {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await apiClient.get(`/recipes/${this.recipeId}`, {
+        const response = await apiClient.get(`/${this.recipeId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -137,11 +137,11 @@ export default {
     };
 
     if (this.isEditing) {
-      await apiClient.put(`/recipes/${this.recipeId}`, formData, { headers });
+      await apiClient.put(`/${this.recipeId}`, formData, { headers });
       alert("Recipe updated successfully!");
       
     } else {
-      await apiClient.post("/recipes", formData, { headers });
+      await apiClient.post("/", formData, { headers });
       alert("Recipe added successfully!");
     }
 

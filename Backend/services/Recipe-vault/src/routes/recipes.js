@@ -200,7 +200,7 @@ router.post('/search-by-ingredients', async (req, res) => {
       if (!recipe) return res.status(404).json({ message: "Recipe not found" });
   
       // Log the view to the Analytics microservice
-      await axios.post("http://localhost:5003/api/analytics/log-view", {
+      await axios.post("http://localhost:5005/api/analytics/log-view", {
         recipeId,
         userId,
       });
