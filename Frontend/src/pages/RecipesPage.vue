@@ -56,7 +56,7 @@ export default {
         if (this.selectedCategory) params.category = this.selectedCategory;
         if (this.searchQuery) params.search = this.searchQuery;
 
-        const response = await apiClient.get("/recipes", { params });
+        const response = await apiClient.get("/", { params });
         this.recipes = response.data;
       } catch (error) {
         console.error("Error fetching recipes:", error);

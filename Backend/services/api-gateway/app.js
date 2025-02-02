@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
@@ -10,6 +11,11 @@ const { correlationIdMiddleware } = require('../../services/correlationId'); // 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({ 
+  origin: "http://localhost:8080", // Allow frontend
+  credentials: true // Allow cookies and authentication headers
+}));
 
 // Middleware to generate or retrieve correlation IDs
 app.use(correlationIdMiddleware);
