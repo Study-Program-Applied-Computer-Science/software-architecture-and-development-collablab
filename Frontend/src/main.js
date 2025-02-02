@@ -4,6 +4,8 @@ import router from "./router";
 import store from "./store";
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
+// Import global styles
+import './assets/global.css';
 
 const app = createApp(App);
 

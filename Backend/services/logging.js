@@ -23,7 +23,7 @@ const esTransport = (appName) => {
         password: "QYPhGhp9zOVbre2iNNqzukhZ",
       },
     },
-    indexPrefix: "sms-logs", // Logs will be stored in indices like "nodejs-logs-YYYY.MM.DD"
+    indexPrefix: "api-gateway-logs", // Logs will be stored in indices like "api-gateway-logs-YYYY.MM.DD"
     transformer: (logData) => ({
       ...logData,
       timestamp: logData.timestamp || new Date().toISOString(),
@@ -34,28 +34,17 @@ const esTransport = (appName) => {
   return transporter;
 };
 
-// Create the logger
-const createDynamicLogger = (appName) => {
-  const logger = createLogger({
-    levels: customLevels.levels,
-    format: format.combine(
-      format.timestamp(),
-      format.printf(({ level, message, timestamp }) => {
-        // Add correlation ID to the log entry
-        return JSON.stringify({
-          timestamp,
-          level,
-          message,
-          correlationId: getCorrelationId() || "N/A",
-        });
-      })
-    ),
-    transports: [
-      new transports.Console(), // Log to console
-      new ElasticsearchTransport(esTransport(appName)), // Log to Elasticsearch
-    ],
-  });
-  return logger;
-};
-let authServiceLogger = createDynamicLogger("authService");
-module.exports = { authServiceLogger };
+// Create a logger instance
+const logger = createLogger({
+  levels: customLevels.levels,
+  format: format.combine(
+    format.timestamp(),
+    format.json()
+  ),
+  transports: [
+    new transports.Console(),
+    new ElasticsearchTransport(esTransport('api-gateway'))
+  ],
+});
+
+module.exports = logger;

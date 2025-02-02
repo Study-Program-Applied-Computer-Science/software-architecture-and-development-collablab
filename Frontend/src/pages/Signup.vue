@@ -1,38 +1,74 @@
 <template>
   <div class="auth-container">
+    <!-- Left Section with Image -->
     <div class="auth-image">
-      <img src="../assets/signup.png" alt="Signup" />
+      <img src="../assets/signup.png" alt="Signup Illustration" />
     </div>
-    <div class="auth-form">
-      <h2>Signup</h2>
-      <form @submit.prevent="signup">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" v-model="username" required />
+
+    <!-- Right Section with Signup Form -->
+    <div class="auth-form-container">
+      <div class="auth-form">
+        <div class="form-header">
+          <router-link to="/">
+            <img src="../assets/back.png" alt="Signup Illustration" />
+          </router-link>
+          <h2>Sign Up</h2>
         </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" required />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-        <button type="submit">Signup</button>
-      </form>
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p>
-        Already have an account? <router-link to="/login">Login</router-link>
-      </p>
+
+        <form class="formWidth" @submit.prevent="signup">
+          <!-- Email Field -->
+          <div class="form-group">
+            <input
+              type="email"
+              id="email"
+              v-model="email"
+              placeholder="E-mail"
+              required
+            />
+          </div>
+
+          <!-- Username Field -->
+          <div class="form-group">
+            <input
+              type="text"
+              id="username"
+              v-model="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <input
+              type="password"
+              id="password"
+              v-model="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+
+          <!-- Signup Button -->
+          <button type="submit">Sign Up</button>
+        </form>
+
+        <!-- Footer -->
+        <p>
+          Already have an account?
+          <router-link to="/login">Sign In Now!</router-link>
+        </p>
+      </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import { authClient } from "@/api/index";
 
 export default {
-    name: "SignUp",
+  name: "SignUp",
   data() {
     return {
       username: "",
@@ -61,7 +97,8 @@ export default {
       } catch (error) {
         console.error("Signup failed:", error);
         if (error.response) {
-          this.errorMessage = error.response.data.msg || "Signup failed. Please try again.";
+          this.errorMessage =
+            error.response.data.msg || "Signup failed. Please try again.";
         } else {
           this.errorMessage = "Server error. Please check your connection.";
         }
@@ -74,38 +111,120 @@ export default {
 <style scoped>
 .auth-container {
   display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Left Section */
+.auth-image {
+  flex: 1;
+  background-color: white;
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
 }
-
+.formWidth{
+  width: 100%;
+}
 .auth-image img {
-  max-width: 100%;
+  max-width: 80%;
   height: auto;
+  object-fit: contain;
 }
 
+/* Right Section */
+.auth-form-container {
+  flex: 1;
+  background-color: #ffe6cc; /* Light Orange */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Styling */
 .auth-form {
+  width: 80%;
   max-width: 400px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-header img {
+  width: 1.1rem;
+  height: 1.4rem;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  margin-right: 32px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+input:focus {
+  outline: none;
+  border-color: #e67e22;
+  box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
 }
 
 button {
-  background-color: #007bff;
+  width: 100%;
+  background-color: #e67e22; /* Orange */
   color: white;
-  padding: 10px 15px;
+  padding: 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: 10px;
+
+button:hover {
+  background-color: #d35400; /* Darker Orange */
+}
+
+p {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+  margin-left: 9%;
+}
+
+p a {
+  color: #e67e22;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+p a:hover {
+  text-decoration: underline;
 }
 </style>

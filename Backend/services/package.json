@@ -1,0 +1,20 @@
+{
+  "name": "rest_api_basic_to_advance",
+  "version": "1.0.0",
+  "description": "Boiler plate project for rest api concepts",
+  "main": "index.js",
+  "scripts": {
+    "start:authService": "npm --prefix ./user-authentication run dev-user-authentication"
+      },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "cls-hooked": "^4.2.2",
+    "express-rate-limit": "^7.5.0",
+    "uuid": "^11.0.5",
+    "winston": "^3.17.0",
+    "winston-elasticsearch": "^0.19.0"
+  }
+}
