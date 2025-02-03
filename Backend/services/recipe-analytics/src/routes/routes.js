@@ -9,34 +9,52 @@ dotenv.config();
 
 const router = express.Router();
 
-// Log a View api endpoint
+// ✅ Log a View API - Logs User Views Recipe
 router.post("/log-view", authMiddleware, async (req, res) => {
-  const { recipeId } = req.body;
-  const userId = req.user.id;
-
-  if (!recipeId || !userId) {
-    return res.status(400).json({ message: "Recipe ID and User ID are required" });
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(recipeId)) {
-    return res.status(400).json({ message: "Invalid Recipe ID format" });
-  }
-
   try {
+    const { recipeId } = req.body;
+    const userId = req.user.id; // ✅ Get user ID from token
 
-    const record = await RecipeAnalytics.findOneAndUpdate(
-      { recipeId },
-      {
-        $inc: { views: 1 },
-        $push: { logs: { action: "view", date: new Date(), userId } },
-      },
-      { new: true, upsert: true }
-    );
+    if (!recipeId) {
+      return res.status(400).json({ message: "Recipe ID is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+      return res.status(400).json({ message: "Invalid Recipe ID format" });
+    }
+
+    let record = await RecipeAnalytics.findOne({ recipeId });
+
+    if (!record) {
+      // ✅ Create a new record if recipe does not exist
+      record = new RecipeAnalytics({
+        recipeId,
+        views: 1,
+        logs: [{ action: "view", date: new Date(), userId }]
+      });
+      await record.save();
+    } else {
+      // ✅ If record exists, update views count and push log
+      record.views += 1;
+      record.logs.push({ action: "view", date: new Date(), userId });
+      await record.save();
+    }
 
     res.status(200).json({ message: "View logged successfully", record });
   } catch (error) {
     console.error("Error logging view:", error);
     res.status(500).json({ message: "Failed to log view", error: error.message });
+  }
+});
+
+// ✅ Get all logged views
+router.get("/all-logs", authMiddleware, async (req, res) => {
+  try {
+    const logs = await RecipeAnalytics.find();
+    res.status(200).json(logs);
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+    res.status(500).json({ message: "Failed to fetch logs" });
   }
 });
 
@@ -50,7 +68,7 @@ router.get("/admin/report", authMiddleware, async (req, res) => {
   try {
     const analyticsData = await RecipeAnalytics.find();
     if (!analyticsData.length) {
-      return res.status(404).json({ message: "No analytics data available." });
+      return res.status(200).json({ message: "No recent logs available for report." });
     }
 
     // Format data for report
@@ -62,7 +80,7 @@ router.get("/admin/report", authMiddleware, async (req, res) => {
     }));
 
     if (!formattedData.length) {
-      return res.status(404).json({ message: "No valid analytics data found." });
+      return res.status(404).json({ message: "No recent logs available for report." });
     }
   
 
@@ -90,8 +108,18 @@ if (req.user.role !== "admin") {
  return res.status(403).json({ message: "Access denied. Admins only." });
 }
 
+// try {
+//  const logsCount = await RecipeAnalytics.countDocuments({ "logs.0": { $exists: true } });
+
 try {
- const logsCount = await RecipeAnalytics.countDocuments({ "logs.0": { $exists: true } });
+  const logsCount = await RecipeAnalytics.aggregate([
+    { $unwind: "$logs" }, // Flatten logs array
+    { $count: "totalLogs" } // Count total logs
+  ]);
+
+
+
+
  res.status(200).json({ logsCount });
 } catch (error) {
  console.error("Error checking logs:", error);
@@ -106,11 +134,17 @@ if (req.user.role !== "admin") {
 }
 
 try {
- const result = await RecipeAnalytics.deleteMany({});
- res.json({ message: "Analytics logs deleted successfully", deletedCount: result.deletedCount });
+  // Delete logs but keep recipe analytics structure intact
+  const result = await RecipeAnalytics.updateMany({}, { $set: { logs: [], views: 0 } });
+
+  if (result.modifiedCount === 0) {
+    return res.status(200).json({ message: "No logs were deleted because there were none." });
+  }
+
+  res.status(200).json({ message: "Analytics logs deleted successfully.", deletedCount: result.modifiedCount });
 } catch (error) {
- console.error("Error deleting logs:", error);
- res.status(500).json({ message: "Failed to delete logs", error: error.message });
+  console.error("Error deleting logs:", error);
+  res.status(500).json({ message: "Failed to delete logs", error: error.message });
 }
 });
 

@@ -1,14 +1,19 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
+
 //const cors = require("cors");
+
 const userRoutes = require("./routes/Routes");
  
+
 dotenv.config();
  
 const app = express();
- 
-// Connect to MongoDB directly inside `app.js`
+
+// ✅ Connect to MongoDB directly inside `app.js`
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -19,6 +24,7 @@ mongoose
     console.error("MongoDB Connection Error:", err);
     process.exit(1);
   });
+
  
 // Middleware
 app.use(express.json());
@@ -32,3 +38,4 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`User Management Service running on port ${PORT}`);
 });
+
