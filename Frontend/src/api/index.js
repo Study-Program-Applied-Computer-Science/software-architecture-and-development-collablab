@@ -24,4 +24,11 @@ export const analyticsClient = axios.create({
   },
 });
 
+// User managagement for admin API (Port 5001)
+export const userMangementClient = axios.create({
+  baseURL: "http://localhost:5005/api/user-management",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 

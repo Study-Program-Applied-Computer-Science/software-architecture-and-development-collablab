@@ -18,24 +18,12 @@
         <form class="formWidth" @submit.prevent="login">
           <!-- Username Field -->
           <div class="form-group">
-            <input
-              type="text"
-              id="username"
-              v-model="username"
-              placeholder="Username"
-              required
-            />
+            <input type="text" v-model="username" placeholder="Username" required />
           </div>
 
           <!-- Password Field -->
           <div class="form-group">
-            <input
-              type="password"
-              id="password"
-              v-model="password"
-              placeholder="Password"
-              required
-            />
+            <input type="password" v-model="password" placeholder="Password" required />
           </div>
 
           <!-- Login Button -->
@@ -71,28 +59,37 @@ export default {
   methods: {
     async login() {
       this.errorMessage = ""; // Clear previous errors
+
       try {
         const response = await authClient.post("/login", {
           username: this.username,
           password: this.password,
         });
 
-        if (response && response.data.token) {
-          console.log("Login successful:", response.data);
+        if (!response.data.token) {
+          throw new Error("⚠️ No token received.");
+        }
 
-          // Save token to localStorage
-          localStorage.setItem("authToken", response.data.token);
-          const decodedToken = jwtDecode(response.data.token);
-          const userRole = decodedToken.user.role;
-          localStorage.setItem("userRole", userRole);
+        console.log("✅ Login successful:", response.data);
 
-          alert("Login successful! Redirecting...");
-          this.$router.push("/"); // Redirect to homepage
+        // ✅ Store token correctly
+        localStorage.setItem("authToken", response.data.token);
+
+        // ✅ Decode JWT token
+        const decodedToken = jwtDecode(response.data.token);
+        const userRole = decodedToken.user.role;
+        localStorage.setItem("userRole", userRole);
+
+        console.log("🔐 User role:", userRole);
+
+        // ✅ Redirect based on user role
+        if (userRole === "admin") {
+          this.$router.push("/adminanalytics");
         } else {
-          throw new Error("Unexpected response from server");
+          this.$router.push("/");
         }
       } catch (error) {
-        console.error("Login failed:", error);
+        console.error("❌ Login failed:", error.response?.data || error);
         this.errorMessage =
           error.response?.data?.msg || "Login failed. Please try again.";
       }
@@ -121,13 +118,14 @@ export default {
   height: auto;
   object-fit: contain;
 }
-.formWidth{
+.formWidth {
   width: 100%;
 }
+
 /* Right Section */
 .auth-form-container {
   flex: 1;
-  background-color: #F3C5B6; /* Light Orange */
+  background-color: #f3c5b6;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -188,7 +186,7 @@ input:focus {
 
 button {
   width: 100%;
-  background-color: #C23C13; /* Orange */
+  background-color: #c23c13;
   color: white;
   padding: 12px;
   border: none;
@@ -199,7 +197,7 @@ button {
 }
 
 button:hover {
-  background-color: #A23210; /* Darker Orange */
+  background-color: #a23210;
 }
 
 p {
@@ -210,7 +208,7 @@ p {
 }
 
 p a {
-  color: #C23C13;
+  color: #c23c13;
   text-decoration: none;
   font-weight: bold;
 }

@@ -14,17 +14,21 @@
       />
     </div>
     <p v-else>No recipes found.</p>
-  </div></div>
+  </div>
+  <!-- Footer -->
+  <Footer />
+  </div>
 </template>
 
 <script>
 import { apiClient } from "@/api/index";
 import RecipeCard from "@/components/RecipeCard.vue";
 import Navbar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   name: "UserProfile",
-  components: { RecipeCard, Navbar },
+  components: { RecipeCard, Navbar, Footer },
   data() {
     return {
       recipes: [],
