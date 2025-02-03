@@ -45,7 +45,7 @@ app.use(limiter);
 app.use('/api/auth', createProxyMiddleware({ target: process.env.AUTH_SERVICE, changeOrigin: true, pathRewrite: { '^/api/auth': '' } }));
 app.use('/api/analytics', createProxyMiddleware({ target: process.env.ANALYTICS_SERVICE, changeOrigin: true, pathRewrite: { '^/api/analytics': '' } }));
 app.use('/api/recipes', createProxyMiddleware({ target: process.env.RECIPE_SERVICE, changeOrigin: true, pathRewrite: { '^/api/recipes': '' } }));
-app.use('/api/user', createProxyMiddleware({ target: process.env.USER_SERVICE, changeOrigin: true, pathRewrite: { '^/api/user': '' } }));
+app.use('/api/user-management', createProxyMiddleware({ target: process.env.USER_SERVICE, changeOrigin: true, pathRewrite: { '^/api/user-management': '' } }));
 
 // Start the server
 const PORT = process.env.PORT || 5005;

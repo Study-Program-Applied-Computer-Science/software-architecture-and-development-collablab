@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+
+//const cors = require("cors");
+
 const userRoutes = require("./routes/Routes");
  
 
@@ -16,23 +19,23 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("✅ MongoDB Connected Successfully!"))
+  .then(() => console.log("MongoDB Connected Successfully!"))
   .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err);
+    console.error("MongoDB Connection Error:", err);
     process.exit(1);
   });
 
  
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:8080", credentials: true }));
+
  
-// ✅ Mount user management routes
+// Mount user management routes
 app.use("/api/user-management", userRoutes);
  
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5001;
  
 app.listen(PORT, () => {
-  console.log(`✅ User Management Service running on port ${PORT}`);
+  console.log(`User Management Service running on port ${PORT}`);
 });
 
