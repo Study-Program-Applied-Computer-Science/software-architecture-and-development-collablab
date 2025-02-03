@@ -1,14 +1,15 @@
 services:
   api-gateway:
     build:
-      context: ./api-gateway
+      context: .
+      dockerfile: api-gateway/Dockerfile
     ports:
       - "5005:5005"
     environment:
       - PORT=5005
       - AUTH_SERVICE=http://user-authentication:5002/api/auth
       - ANALYTICS_SERVICE=http://recipe-analytics:5003/api/analytics
-      - RECIPE_SERVICE=http://recipe-vault:5000/api/recipes
+      - RECIPE_SERVICE=http://recipe-vault:5004/api/recipes
       - USER_SERVICE=http://user-management:5001/api/user
     depends_on:
       - user-authentication
@@ -18,15 +19,26 @@ services:
 
   user-authentication:
     build:
-      context: ./user-authentication
+      context: .
+      dockerfile: user-authentication/Dockerfile
     ports:
       - "5002:5002"
     environment:
       - PORT=5002
 
+  user-management:
+    build:
+      context: .
+      dockerfile: user-management/Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+
   recipe-analytics:
     build:
-      context: ./recipe-analytics
+      context: .
+      dockerfile: recipe-analytics/Dockerfile
     ports:
       - "5003:5003"
     environment:
@@ -34,16 +46,9 @@ services:
 
   recipe-vault:
     build:
-      context: ./recipe-vault
+      context: .
+      dockerfile: recipe-vault/Dockerfile
     ports:
-      - "5000:5000"
+      - "5004:5004"
     environment:
-      - PORT=5000
-
-  user-management:
-    build:
-      context: ./user-management
-    ports:
-      - "5001:5001"
-    environment:
-      - PORT=5001
+      - PORT=5004

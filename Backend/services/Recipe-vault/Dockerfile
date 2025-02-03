@@ -13,6 +13,11 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Copy shared files from the services folder
+COPY ../consts.js ./
+COPY ../logging.js ./
+COPY ../correlationId.js ./
+
 # Expose the port the app runs on
 EXPOSE 5000
 

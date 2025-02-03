@@ -1,20 +1,25 @@
-# Use the official Node.js image as the base image
-FROM node:22
+# Use the official Node.js 22-alpine image as the base image
+FROM node:22-alpine
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Set the working directory to the correct location where package.json resides
+WORKDIR /usr/src/app/user-authentication
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json and package-lock.json into the working directory
+COPY user-authentication/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
-COPY . .
+COPY user-authentication/ ./
+
+# Optionally, if you need to copy shared files (adjust paths accordingly)
+COPY ../consts.js ./
+COPY ../logging.js ./
+COPY ../correlationId.js ./
 
 # Expose the port the app runs on
-EXPOSE 5005
+EXPOSE 5002
 
 # Start the application
 CMD ["npm", "start"]
