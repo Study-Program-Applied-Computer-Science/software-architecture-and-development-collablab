@@ -1,7 +1,10 @@
 <template>
-  <div>
+  <div class="page-container">
+    <!-- Navbar -->
     <Navbar />
-    <div class="admin-dashboard p-6 flex flex-col items-center justify-center min-h-screen bg-gray-50">
+
+    <!-- Main Content -->
+    <div class="admin-dashboard p-6 flex flex-col items-center justify-center">
       <h1 class="text-4xl font-extrabold mb-2 text-center text-green-700">Hello Admin!</h1>
       <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Manage Users</h2>
       <div class="w-full max-w-4xl overflow-x-auto shadow-lg rounded-lg">
@@ -14,12 +17,18 @@
             </tr>
           </thead>
           <tbody class="text-gray-700 text-sm font-light">
-            <tr v-for="user in users" :key="user._id" class="border-b border-gray-200 hover:bg-gray-100">
+            <tr
+              v-for="user in users"
+              :key="user._id"
+              class="border-b border-gray-200 hover:bg-gray-100"
+            >
               <td class="py-3 px-6 text-left whitespace-nowrap font-medium">{{ user.username }}</td>
               <td class="py-3 px-6 text-left">{{ user.email }}</td>
               <td class="py-3 px-6 text-center">
-                <button @click="deleteUser(user._id)"
-                        class="bg-red-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-red-700 transition duration-300">
+                <button
+                  @click="deleteUser(user._id)"
+                  class="bg-red-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-red-700 transition duration-300"
+                >
                   Delete
                 </button>
               </td>
@@ -29,17 +38,22 @@
         <p v-else class="text-center text-gray-500 mt-4">No users found.</p>
       </div>
     </div>
+
+    <!-- Footer -->
+    <Footer />
   </div>
 </template>
 
 <script>
 import { userMangementClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   name: "adminMain",
   components: {
     Navbar,
+    Footer,
   },
   data() {
     return { users: [] };
@@ -69,7 +83,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        this.users = this.users.filter(user => user._id !== userId);
+        this.users = this.users.filter((user) => user._id !== userId);
         alert("User deleted successfully!");
       } catch (error) {
         console.error("Error deleting user:", error);
@@ -81,11 +95,22 @@ export default {
 </script>
 
 <style scoped>
-.admin-dashboard {
-  font-family: 'Poppins', sans-serif;
+/* Full-page layout using Flexbox */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-th, td {
+/* Main content takes available space */
+.admin-dashboard {
+  flex: 1;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Table styling */
+th,
+td {
   text-align: left;
   padding: 12px 15px;
 }
@@ -97,12 +122,12 @@ th {
 }
 
 th:nth-child(2) {
-  background-color: #D97706;
+  background-color: #d97706;
 }
 
 button {
   cursor: pointer;
-  background-color: #FF0000;
+  background-color: #ff0000;
   color: white;
   padding: 8px 16px;
   border: none;
@@ -112,13 +137,14 @@ button {
 }
 
 button:hover {
-  background-color: #CC0000;
+  background-color: #cc0000;
 }
 
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
+/* Responsive design for mobile devices */
 @media (min-width: 640px) {
   .admin-dashboard {
     max-width: 800px;

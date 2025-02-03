@@ -1,15 +1,23 @@
 <template>
   <div class="admin-analytics-page">
+    <!-- Navbar -->
     <Navbar />
+
+    <!-- Page Heading -->
     <div class="sectionHeading">
       <h1>Admin Analytics Dashboard</h1>
     </div>
+
+    <!-- Page Content -->
     <div class="content">
       <div class="buttons">
         <button @click="generateReport" class="btn btn-primary">Generate Report</button>
         <button @click="deleteLogs" class="btn btn-danger">Delete Logs</button>
       </div>
     </div>
+
+    <!-- Footer -->
+    <Footer />
   </div>
 </template>
 
@@ -17,141 +25,102 @@
 import { useToast } from "vue-toast-notification";
 import { analyticsClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue"; 
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import { jwtDecode } from "jwt-decode";
 
 export default {
   name: "AdminAnalytics",
-  components: { Navbar },
+  components: { Navbar, Footer }, // Register Footer component
 
   setup() {
     const toast = useToast();
     const router = useRouter();
     const isLoading = ref(false);
-    const logsExist = ref(false); // Track if logs exist
+    const logsExist = ref(false);
 
-    // ✅ Ensure only Admins can access this page
     onMounted(async () => {
       const token = localStorage.getItem("authToken");
-
       if (!token) {
-        console.error("⚠️ No token found. Redirecting to login.");
         router.push("/login");
         return;
       }
-
       try {
         const payload = jwtDecode(token);
         const userRole = payload.user?.role;
 
-        console.log("🔍 Checking Admin Access:", userRole);
-
         if (userRole !== "admin") {
-          console.error("❌ Access denied: Admins only.");
           router.push("/");
           return;
         }
-
-        // ✅ Fetch latest logs count when page loads
         await checkLogs();
       } catch (error) {
-        console.error("⚠️ Invalid token format. Redirecting to login.");
         router.push("/login");
       }
     });
 
-   // ✅ Fetch latest logs count before any action
-const checkLogs = async () => {
-  try {
-    const token = localStorage.getItem("authToken");
-    const logsResponse = await analyticsClient.get("/admin/logs/check", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    console.log("📊 Raw Logs Count Response:", logsResponse.data);
-
-    // ✅ Extract `totalLogs` count from MongoDB aggregation result
-    const logsCount = logsResponse.data.logsCount?.length ? logsResponse.data.logsCount[0].totalLogs : 0;
-    
-    logsExist.value = logsCount > 0;
-    console.log("📊 Final Processed Logs Count:", logsCount);
-    
-    return logsExist.value;
-  } catch (error) {
-    console.error("❌ Error checking logs:", error.response?.data || error);
-    toast.error("Failed to fetch logs.");
-    return false;
-  }
-};
-
-    const generateReport = async () => {
-  try {
-    isLoading.value = true;
-
-    // ✅ Fetch latest logs count
-    await checkLogs();
-    
-    if (!logsExist.value) {
-      toast.info("There are no recent logs.");
-      return;
-    }
-
-    console.log("📥 Requesting Report...");
-    const token = localStorage.getItem("authToken");
-    const response = await analyticsClient.get("/admin/report", {
-      responseType: "blob",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!response || !response.data) {
-      throw new Error("⚠️ Empty response from the server.");
-    }
-
-    console.log("📥 Report received. Downloading...");
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers["content-type"] }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "analytics-report.xlsx");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    toast.success("📂 Report downloaded successfully!");
-  } catch (error) {
-    console.error("❌ Error generating report:", error.response?.data || error);
-    let errorMessage = error.response?.data?.message || "Failed to generate report.";
-    toast.error(errorMessage);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-    // ✅ Delete Logs Function
-    const deleteLogs = async () => {
+    const checkLogs = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        if (!token) {
-          console.error("⚠️ No token found. Cannot delete logs.");
+        const logsResponse = await analyticsClient.get("/admin/logs/check", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const logsCount = logsResponse.data.logsCount?.length
+          ? logsResponse.data.logsCount[0].totalLogs
+          : 0;
+        logsExist.value = logsCount > 0;
+        return logsExist.value;
+      } catch (error) {
+        toast.error("Failed to fetch logs.");
+        return false;
+      }
+    };
+
+    const generateReport = async () => {
+      try {
+        isLoading.value = true;
+        await checkLogs();
+        if (!logsExist.value) {
+          toast.info("There are no recent logs.");
           return;
         }
 
+        const token = localStorage.getItem("authToken");
+        const response = await analyticsClient.get("/admin/report", {
+          responseType: "blob",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: response.headers["content-type"] })
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "analytics-report.xlsx");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success("Report downloaded successfully!");
+      } catch (error) {
+        toast.error("Failed to generate report.");
+      } finally {
+        isLoading.value = false;
+      }
+    };
+
+    const deleteLogs = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
         const confirmation = confirm("Are you sure you want to delete all logs?");
         if (!confirmation) return;
 
-        console.log("🗑️ Deleting logs...");
         const response = await analyticsClient.delete("/admin/logs", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        console.log("✅ Logs deleted successfully:", response.data);
         toast.success(response.data.message);
-
-        logsExist.value = false; // ✅ Ensure logs do not exist after deletion
+        logsExist.value = false;
       } catch (error) {
-        console.error("❌ Error deleting logs:", error.response?.data || error);
-        let errorMessage = error.response?.data?.message || "Failed to delete logs.";
-        toast.error(errorMessage);
+        toast.error("Failed to delete logs.");
       }
     };
 
@@ -164,10 +133,7 @@ const checkLogs = async () => {
 .admin-analytics-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
+  min-height: 100vh; /* Full viewport height */
 }
 
 .sectionHeading {
@@ -185,6 +151,8 @@ const checkLogs = async () => {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  margin: 20px auto;
+  flex: 1; /* Makes content take available space */
 }
 
 .buttons {
@@ -215,5 +183,13 @@ const checkLogs = async () => {
 
 .btn:hover {
   opacity: 0.9;
+}
+
+/* Footer styling to ensure it stays at the bottom */
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 2rem;
+  text-align: center;
 }
 </style>

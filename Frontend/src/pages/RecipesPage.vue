@@ -1,6 +1,9 @@
 <template>
   <div class="recipes-page">
-    <Navbar/>
+    <!-- Navbar -->
+    <Navbar />
+    
+    <!-- Page Content -->
     <div class="sectionHeading">
       <h1>Recipes</h1>
     </div>
@@ -28,19 +31,24 @@
         :recipe="recipe"
       />
     </div>
-  </div> 
+
+    <!-- Footer -->
+    <Footer />
+  </div>
 </template>
 
 <script>
 import { apiClient } from "@/api/index";
 import RecipeCard from "../components/RecipeCard.vue";
-
 import Navbar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue";
+
 export default {
   name: "RecipesPage",
   components: {
     RecipeCard,
     Navbar,
+    Footer, // Register Footer
   },
   data() {
     return {

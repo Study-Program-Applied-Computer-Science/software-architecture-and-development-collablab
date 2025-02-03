@@ -1,8 +1,12 @@
 <template>
-<div><Navbar/>
+<div class="page-container">
+  <!-- Navbar -->
+  <Navbar />
+
+  <!-- Main Content -->
   <div class="smart-pantry">
     <h1>Smart Pantry</h1>
-    <p>Add the only ingredients you have and find recipes you can make!</p> &nbsp;
+    <p>Add the only ingredients you have and find recipes you can make!</p>
 
     <form @submit.prevent="searchRecipes">
       <div class="ingredients-input">
@@ -25,7 +29,8 @@
             &times;
           </span>
         </div>
-      </div> <br>
+      </div>
+      <br />
       <button class="secondryButton" type="button" @click="addIngredientField">Add More Ingredients</button>
       <button class="primaryButton" type="submit">Search Recipes</button>
     </form>
@@ -38,23 +43,30 @@
         <RecipeCard
           v-for="recipe in recipes"
           :key="recipe._id"
-          :recipe="recipe"          
+          :recipe="recipe"
         />
       </div>
     </div>
-  </div></div>
+  </div>
+
+  <!-- Footer -->
+  <Footer />
+</div>
 </template>
+
 
 <script>
 import RecipeCard from "../components/RecipeCard.vue";
 import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 export default {
   name: "SmartPantry",
   components: {
     RecipeCard,
-    Navbar,    
+    Navbar,   
+    Footer, 
   },
   data() {
     return {
@@ -97,12 +109,20 @@ export default {
   },
 };
 </script>
-
 <style scoped>
+/* Ensure the entire page is filled */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Main content should stretch to fill the space between navbar and footer */
 .smart-pantry {
+  flex: 1; /* Make this section flexible to fill remaining space */
   text-align: center;
   margin: 20px;
-  }
+}
 
 .ingredients-input {
   display: flex;
@@ -165,5 +185,13 @@ button.secondryButton {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
+}
+
+/* Footer styling (optional, if not already styled in Footer.vue) */
+.footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 2rem;
 }
 </style>
