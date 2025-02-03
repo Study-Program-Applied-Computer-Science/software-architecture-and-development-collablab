@@ -187,11 +187,5 @@ button.secondryButton {
   gap: 20px;
 }
 
-/* Footer styling (optional, if not already styled in Footer.vue) */
-.footer {
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 2rem;
-}
+
 </style>

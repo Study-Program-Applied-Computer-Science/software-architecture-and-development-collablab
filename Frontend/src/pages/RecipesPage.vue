@@ -48,7 +48,7 @@ export default {
   components: {
     RecipeCard,
     Navbar,
-    Footer, // Register Footer
+    Footer, 
   },
   data() {
     return {
@@ -78,25 +78,41 @@ export default {
 </script>
 
 <style scoped>
+.recipes-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensures the page takes the full viewport height */
+}
+
 .sectionHeading {
   text-align: center;
   padding: 1rem;
 }
-.product-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-evenly;
-}
+
 .filters {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
+
 select,
 input {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-evenly;
+  flex-grow: 1; /* Pushes the footer down */
+}
+
+/* Ensures footer stays at the bottom */
+footer {
+  margin-top: auto; 
+}
+
 </style>

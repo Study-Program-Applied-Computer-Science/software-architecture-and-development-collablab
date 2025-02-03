@@ -185,11 +185,5 @@ export default {
   opacity: 0.9;
 }
 
-/* Footer styling to ensure it stays at the bottom */
-.footer {
-  background-color: #333;
-  color: #fff;
-  padding: 2rem;
-  text-align: center;
-}
+
 </style>

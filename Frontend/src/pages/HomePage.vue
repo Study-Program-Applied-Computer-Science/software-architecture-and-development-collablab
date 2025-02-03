@@ -20,8 +20,8 @@
       <div class="feature-text">
         <h2>All in One Recipe Management System For You</h2>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          Cooking Assistant is your ultimate partner in the kitchen. Discover personalized recipes based on what you have in your pantry, and unleash your creativity with ease. 
+          Whether you're trying something new or managing daily meals, we've got you covered!
         </p>
         <div class="feature-buttons">
           <router-link to="/recipeform" class="button">Create a Recipe</router-link>
@@ -56,52 +56,102 @@ export default {
 </script>
 
 <style scoped>
+
 .features {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: auto; /* Remove fixed height */
-  padding: 1.5rem; /* Reduce padding */
-  box-sizing: border-box;
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 4rem; 
+  padding: 3rem 2rem;
+  flex-wrap: wrap; 
 }
 
 .feature-content {
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: left; /* Align text to the left */
-  max-width: 1000px; /* Reduce width */
-  gap: 1.5rem; /* Reduce space between image and text */
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap;
 }
 
 .feature-image {
-  max-width: 250px; /* Reduce image size */
+  width: 40%; 
+  max-width: 400px;
   height: auto;
+  margin-right: 3rem;
 }
 
 .feature-text {
-  max-width: 500px; /* Reduce text section width */
+  width: 55%; 
+  max-width: 500px;
+  text-align: left;
 }
 
 .feature-text h2 {
-  font-size: 1.8rem; /* Adjust font size */
-  margin-bottom: 0.8rem; /* Reduce spacing below heading */
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 .feature-text p {
-  font-size: 1rem; /* Adjust font size */
-  margin-bottom: 1rem; /* Reduce spacing below paragraph */
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
 }
 
 .feature-buttons {
+  margin-top: 1.5rem;
   display: flex;
-  gap: 0.8rem; /* Reduce button spacing */
+  gap: 1rem;
 }
+
+
+.feature-buttons .button.outline:hover {
+  background-color: orange; 
+  color: white; 
+}
+
+
+.button {
+  background-color: #ff6600;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.button.outline {
+  background-color: transparent;
+  border: 2px solid #ff6600;
+  color: #ff6600;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .features {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem; 
+  }
+
+  .feature-image,
+  .feature-text {
+    width: 100%; 
+  }
+
+  .feature-image {
+    margin-right: 0;
+  }
+
+  .feature-text {
+    text-align: center; 
+  }
+}
+
 
 .hero {
   position: relative;
   text-align: center;
-  padding: 4rem 1.5rem; /* Reduce padding for compact view */
+  padding: 4rem 1.5rem; 
   background-image: url("@/assets/background-image.png");
   background-size: cover;
   background-position: center;
@@ -110,34 +160,34 @@ export default {
 }
 
 .hero-content {
-  max-width: 700px; /* Reduce content width */
+  max-width: 700px; 
   margin: 0 auto;
 }
 
 .hero h1 {
-  font-size: 2rem; /* Adjust font size */
-  margin-bottom: 0.8rem; /* Reduce spacing below heading */
+  font-size: 2rem; 
+  margin-bottom: 0.8rem; 
 }
 
 .hero p {
-  font-size: 1.1rem; /* Adjust font size */
-  margin-bottom: 1.5rem; /* Reduce spacing below paragraph */
+  font-size: 1.1rem; 
+  margin-bottom: 1.5rem; 
 }
 
 .hero-button {
-  padding: 0.6rem 1.2rem; /* Reduce button padding */
-  font-size: 0.9rem; /* Adjust font size */
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem; 
 }
 </style>
 
 <style scoped>
-/* General styles */
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
-/* Header styles */
+
 .header {
   background: #fff;
   padding: 1rem 2rem;
@@ -167,12 +217,12 @@ body {
 .hero {
   position: relative;
   text-align: center;
-  padding: 6rem 2rem; /* Adjust padding for better spacing */
-  background-image: url("@/assets/background-image.png"); /* Use correct image path */
+  padding: 6rem 2rem; 
+  background-image: url("@/assets/background-image.png"); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: #fff; /* Text color remains white for contrast */
+  color: #fff; 
 }
 
 .hero::before {
@@ -182,22 +232,22 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6); /* Dark overlay with opacity */
-  z-index: 1; /* Overlay below the text */
+  background: rgba(0, 0, 0, 0.6); 
+  z-index: 1; 
 }
 
 .hero-content {
   position: relative;
-  z-index: 2; /* Bring text above the overlay */
-  max-width: 800px; /* Limit the width of the content */
-  margin: 0 auto; /* Center content horizontally */
+  z-index: 2; 
+  max-width: 800px; 
+  margin: 0 auto; 
   text-align: center;
 }
 
 .hero h1 {
-  font-size: 2.5rem; /* Adjust font size */
+  font-size: 2.5rem; 
   margin-bottom: 1rem;
-  font-weight: bold; /* Enhance text readability */
+  font-weight: bold; 
 }
 
 .hero p {
@@ -254,28 +304,10 @@ body {
   margin-right: 1rem;
 }
 .feature-buttons .button.outline {
-  background: none;
+  background: white;
   color: orange;
   border: 2px solid orange;
 }
 
-/* Footer Section */
-.footer {
-  background-color: #333;
-  color: #fff;
-  padding: 2rem;
-  text-align: center;
-}
-.footer-content ul {
-  list-style: none;
-  padding: 0;
-}
-.footer-content ul li {
-  display: inline-block;
-  margin: 0 1rem;
-}
-.footer-content ul li a {
-  color: #fff;
-  text-decoration: none;
-}
+
 </style>
