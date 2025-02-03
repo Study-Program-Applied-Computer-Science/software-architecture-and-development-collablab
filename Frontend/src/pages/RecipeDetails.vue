@@ -2,16 +2,14 @@
   <div>
     <Navbar />
     <div class="recipe-details">
-      <!-- Recipe Image -->
       <div class="image-container">
         <img :src="recipe.imageUrl ? `http://localhost:5000${recipe.imageUrl}` : defaultImage" alt="Recipe Image" />
       </div>
 
-      <!-- Recipe Information -->
       <div class="info-container">
         <div class="recipe-info">
           <h2>{{ recipe.title }}</h2>
-          <p><strong>Recipe Category:</strong> {{ recipe.category }}</p>
+          <p><strong>Category:</strong> {{ recipe.category }}</p>
           <p><strong>Servings:</strong> {{ recipe.servings }} Persons</p>
           <p><strong>Cooking Time:</strong> {{ recipe.prepTime }} Minutes</p>
         </div>
@@ -21,10 +19,9 @@
         </div>
       </div>
 
-      <!-- Recipe Ingredients and Instructions -->
       <div class="details-container">
         <div class="ingredients">
-          <h3>Recipe Ingredients</h3>
+          <h3>Ingredients</h3>
           <ul>
             <li v-for="ingredient in recipe.ingredients" :key="ingredient">
               {{ ingredient }}
@@ -32,7 +29,7 @@
           </ul>
         </div>
         <div class="instructions">
-          <h3>Cooking Instructions</h3>
+          <h3>Instructions</h3>
           <p>{{ recipe.instructions }}</p>
         </div>
       </div>
@@ -41,9 +38,8 @@
 </template>
 
 <script>
-import { apiClient } from "@/api/index";
+import { apiClient, analyticsClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
-import axios from "axios";
 
 export default {
   name: "RecipeDetails",
@@ -53,65 +49,51 @@ export default {
     return {
       recipe: {},
       defaultImage: "https://via.placeholder.com/400",
+      viewLogged: false, // ✅ Prevent duplicate logging
     };
   },
 
   async created() {
-    // Retrieve recipeId from URL
     const recipeId = this.$route.params.id;
     if (!recipeId) {
-      console.error("Missing recipe ID");
+      console.error("❌ Missing recipe ID");
       return;
     }
 
     try {
-      // Fetch Recipe Details
-      const response = await apiClient.get(`/recipes/${recipeId}`);
+      // ✅ Fetch Recipe Details
+      const response = await apiClient.get(`/${recipeId}`);
       this.recipe = response.data;
 
-      // Plan-1 if user doesnot exist we can use this dummy user
-      this.setupDummyUser();
-
-      // Here it logs recipie views
-      this.logRecipeView(recipeId);
+      // ✅ Ensure user is logged in before logging view
+      const token = localStorage.getItem("authToken");
+      if (token && !this.viewLogged) {
+        this.logRecipeView(recipeId, token);
+      } else {
+        console.warn("⚠️ User not logged in - Skipping view log");
+      }
     } catch (error) {
-      console.error("Error fetching recipe details:", error);
+      console.error("❌ Error fetching recipe details:", error);
     }
   },
 
   methods: {
-    setupDummyUser() {
-      let userId = localStorage.getItem("userId");
-      if (!userId) {
-        const dummyUsers = ["user123", "user456", "user789"];
-        userId = dummyUsers[Math.floor(Math.random() * dummyUsers.length)];
-        localStorage.setItem("userId", userId);
-        console.log("Assigned Dummy User ID:", userId);
+    async logRecipeView(recipeId, token) {
+      try {
+        console.log("📌 Logging view for recipe:", recipeId);
+        const response = await analyticsClient.post(
+          "/log-view",
+          { recipeId },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log("✅ Successfully logged view:", response.data);
+
+        this.viewLogged = true; // ✅ Prevent multiple logs
+      } catch (error) {
+        console.error("❌ Failed to log view:", error.response?.data || error);
       }
     },
-
-    async logRecipeView(recipeId) {
-  const userId = localStorage.getItem("userId") || "guest";
-
-  console.log("🔍 Logging Recipe View:", { recipeId, userId });
-
-  if (!recipeId || !userId) {
-    console.error("Cannot log view, missing recipeId or userId");
-    return;
-  }
-
-  try {
-    const response = await axios.post("http://localhost:5003/api/analytics/log-view", {
-      recipeId,
-      userId,
-    });
-
-    console.log("Successfully logged view:", response.data);
-  } catch (error) {
-    console.error("Failed to log view:", error.response?.data || error);
-  }
-}
-  }
+  },
 };
 </script>
 
@@ -127,7 +109,7 @@ export default {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
+ 
 .image-container {
   text-align: center;
   margin-bottom: 20px;
@@ -139,7 +121,7 @@ export default {
   border-radius: 8px;
   border: 2px solid #ddd;
 }
-
+ 
 .info-container {
   display: flex;
   justify-content: space-between;
@@ -167,7 +149,7 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
-
+ 
 .details-container {
   display: flex;
   justify-content: space-between;
@@ -194,7 +176,7 @@ export default {
   font-size: 14px;
   line-height: 1.5;
 }
-
+ 
 @media (max-width: 768px) {
   .info-container, .details-container {
     flex-direction: column;

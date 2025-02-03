@@ -1,0 +1,49 @@
+services:
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "5005:5005"
+    environment:
+      - PORT=5005
+      - AUTH_SERVICE=http://user-authentication:5002/api/auth
+      - ANALYTICS_SERVICE=http://recipe-analytics:5003/api/analytics
+      - RECIPE_SERVICE=http://recipe-vault:5000/api/recipes
+      - USER_SERVICE=http://user-management:5001/api/user
+    depends_on:
+      - user-authentication
+      - recipe-analytics
+      - recipe-vault
+      - user-management
+
+  user-authentication:
+    build:
+      context: ./user-authentication
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+
+  recipe-analytics:
+    build:
+      context: ./recipe-analytics
+    ports:
+      - "5003:5003"
+    environment:
+      - PORT=5003
+
+  recipe-vault:
+    build:
+      context: ./recipe-vault
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+
+  user-management:
+    build:
+      context: ./user-management
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001

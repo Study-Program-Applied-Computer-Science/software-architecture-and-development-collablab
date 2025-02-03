@@ -1,2 +1,0 @@
--CRUD operations for recipes.
--Image uploads, categorization, search, and filter functionalities.fdfdfd
