@@ -7,11 +7,12 @@
           <li><router-link to="/">Home</router-link></li>
           <li><router-link to="/recipes">Recipes</router-link></li>
           <li><router-link to="/smartpantry">Smart Pantry</router-link></li>
+          <li><router-link to="/recipeform">Create Recipe</router-link></li>
           <li v-if="isAuthenticated && userRole === 'user'">
             <router-link to="/profile">Profile</router-link>
           </li>
           <li v-if="isAuthenticated && userRole === 'admin'">
-            <router-link to="/admin">manage users</router-link>
+            <router-link to="/admin">Manage Users</router-link>
           </li>
           <li v-if="isAuthenticated && userRole === 'admin'">
             <router-link to="/adminanalytics">Analytics</router-link>
@@ -63,7 +64,7 @@ export default {
     this.checkAuthStatus();
   },
   watch: {
-    "$route"() {
+    $route() {
       this.checkAuthStatus();
     },
   },
@@ -98,19 +99,19 @@ export default {
 .sign-out-button {
   padding: 0.5rem 1rem;
   border-radius: 5px;
-  font-weight: bold;
+  font-weight: normal;
   text-decoration: none;
   cursor: pointer;
 }
 
 .sign-in-button {
-  background-color: orange;
+  background-color: #ff8c00;
   color: white;
 }
 
 .sign-out-button {
-  background-color: red;
-  color: white;
-  border: none;
+  background: none;
+  color: #ff8c00;
+  border: 2px solid #ff8c00;
 }
 </style>

@@ -32,11 +32,6 @@ router.get("/users", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-
-
-
-
-
 // Admin: Delete a User
 router.delete("/admin/user/:id", authMiddleware, isAdmin, async (req, res) => {
   try {
@@ -53,12 +48,6 @@ router.delete("/admin/user/:id", authMiddleware, isAdmin, async (req, res) => {
     res.status(error.response?.status || 500).json({ message: "Failed to delete user" });
   }
 });
-
-
-
- 
- 
- 
  
 
 module.exports = router;
