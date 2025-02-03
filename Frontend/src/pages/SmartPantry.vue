@@ -6,7 +6,7 @@
   <!-- Main Content -->
   <div class="smart-pantry">
     <h1>Smart Pantry</h1>
-    <p>Add the only ingredients you have and find recipes you can make!</p>
+    <p>Add the only ingredients you have and find recipes you can make!</p> <br>
 
     <form @submit.prevent="searchRecipes">
       <div class="ingredients-input">

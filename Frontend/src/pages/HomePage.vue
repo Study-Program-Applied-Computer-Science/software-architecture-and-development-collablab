@@ -60,8 +60,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Full viewport height */
-  padding: 2rem;
+  height: auto; /* Remove fixed height */
+  padding: 1.5rem; /* Reduce padding */
   box-sizing: border-box;
 }
 
@@ -70,48 +70,63 @@ export default {
   align-items: center;
   justify-content: center;
   text-align: left; /* Align text to the left */
-  max-width: 1200px; /* Optional: Limit width of the content */
-  gap: 2rem; /* Space between image and text */
+  max-width: 1000px; /* Reduce width */
+  gap: 1.5rem; /* Reduce space between image and text */
 }
 
 .feature-image {
-  max-width: 300px; /* Adjust as needed */
+  max-width: 250px; /* Reduce image size */
   height: auto;
 }
 
 .feature-text {
-  max-width: 600px; /* Limit the width of the text section */
+  max-width: 500px; /* Reduce text section width */
 }
 
 .feature-text h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 1.8rem; /* Adjust font size */
+  margin-bottom: 0.8rem; /* Reduce spacing below heading */
 }
 
 .feature-text p {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  font-size: 1rem; /* Adjust font size */
+  margin-bottom: 1rem; /* Reduce spacing below paragraph */
 }
 
 .feature-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem; /* Reduce button spacing */
 }
 
-.button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  color: white;
-  background-color: orange;
-  border-radius: 5px;
-  font-weight: bold;
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 4rem 1.5rem; /* Reduce padding for compact view */
+  background-image: url("@/assets/background-image.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
 }
 
-.button.outline {
-  background: none;
-  color: orange;
-  border: 2px solid orange;
+.hero-content {
+  max-width: 700px; /* Reduce content width */
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: 2rem; /* Adjust font size */
+  margin-bottom: 0.8rem; /* Reduce spacing below heading */
+}
+
+.hero p {
+  font-size: 1.1rem; /* Adjust font size */
+  margin-bottom: 1.5rem; /* Reduce spacing below paragraph */
+}
+
+.hero-button {
+  padding: 0.6rem 1.2rem; /* Reduce button padding */
+  font-size: 0.9rem; /* Adjust font size */
 }
 </style>
 
