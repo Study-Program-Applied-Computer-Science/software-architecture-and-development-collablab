@@ -149,7 +149,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Search recipes by ingredients (NEW ENDPOINT)
-router.post('/search-by-ingredients', async (req, res) => {
+router.post('/search-by-ingredients', authMiddleware, async (req, res) => {
     try {
       const { ingredients } = req.body;
   
@@ -167,7 +167,7 @@ router.post('/search-by-ingredients', async (req, res) => {
         return res.status(400).json({ message: 'At least one valid ingredient must be provided' });
       }
   
-      // Perform case-insensitive and trimmed matching using regex
+      // Search for recipes that contain all the provided ingredients using regex
       const recipes = await Recipe.find({
         ingredients: {
           $all: normalizedIngredients.map(

@@ -1,22 +1,35 @@
 <template>
   <div class="admin-analytics-page">
-    <!-- Navbar -->
+    
     <Navbar />
 
-    <!-- Page Heading -->
+    
     <div class="sectionHeading">
       <h1>Admin Analytics Dashboard</h1>
     </div>
 
-    <!-- Page Content -->
+   
     <div class="content">
       <div class="buttons">
-        <button @click="generateReport" class="btn btn-primary">Generate Report</button>
-        <button @click="deleteLogs" class="btn btn-danger">Delete Logs</button>
+        <button @click="generateReport" class="btn btn-primary" :disabled="isLoading">
+          Generate Report
+        </button>
+        <button @click="deleteLogs" class="btn btn-danger" :disabled="isLoading">
+          Delete Logs
+        </button>
       </div>
-    </div>
 
-    <!-- Footer -->
+      <div class="falling-container">
+        <span v-for="(veg, index) in vegetables"
+          :key="index"
+          class="vegetable"
+          :style="veg.style">
+          {{ veg.icon }}
+        </span>
+      </div>
+      
+    
+    </div>
     <Footer />
   </div>
 </template>
@@ -39,6 +52,7 @@ export default {
     const router = useRouter();
     const isLoading = ref(false);
     const logsExist = ref(false);
+    const vegetables = ref([]);
 
     onMounted(async () => {
       const token = localStorage.getItem("authToken");
@@ -80,6 +94,8 @@ export default {
     const generateReport = async () => {
       try {
         isLoading.value = true;
+        startAnimation();
+
         await checkLogs();
         if (!logsExist.value) {
           toast.info("There are no recent logs.");
@@ -110,6 +126,9 @@ export default {
 
     const deleteLogs = async () => {
       try {
+        isLoading.value = true;
+        startAnimation();
+
         const token = localStorage.getItem("authToken");
         const confirmation = confirm("Are you sure you want to delete all logs?");
         if (!confirmation) return;
@@ -121,10 +140,34 @@ export default {
         logsExist.value = false;
       } catch (error) {
         toast.error("Failed to delete logs.");
+      } finally {
+        isLoading.value = false;
       }
     };
 
-    return { generateReport, deleteLogs, isLoading };
+    // Falling Vegetables Animation
+    const startAnimation = () => {
+      vegetables.value = []; // Clear previous animation
+
+      const vegIcons = ["🍅", "🥕", "🌽", "🥒", "🍆", "🧅", "🥦"  ]; // Available vegetables
+
+      for (let i = 0; i < 10; i++) {
+        vegetables.value.push({
+          icon: vegIcons[Math.floor(Math.random() * vegIcons.length)],
+          style: {
+            left: `${Math.random() * 80}%`, // Random horizontal position
+            animationDuration: `${1.5 + Math.random() * 2}s`, // Random fall speed
+          },
+        });
+      }
+
+      // Clear vegetables after 3 seconds
+      setTimeout(() => {
+        vegetables.value = [];
+      }, 3000);
+    };
+
+    return { generateReport, deleteLogs, isLoading, vegetables };
   },
 };
 </script>
@@ -149,17 +192,18 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 8px;
+  border: #ff8c00 solid 2px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   margin: 20px auto;
-  flex: 1; /* Makes content take available space */
+  flex: 1;
 }
 
 .buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 80px;
 }
 
 .btn {
@@ -185,5 +229,27 @@ export default {
   opacity: 0.9;
 }
 
+.falling-container {
+  position: absolute;
+  width: 50%;
+  height: 200px;
+  overflow: hidden;
+}
 
+.vegetable {
+  position: absolute;
+  top: -50px;
+  font-size: 30px;
+  animation: fall ease-in infinite;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(200px);
+    opacity: 0;
+  }
+}
 </style>
