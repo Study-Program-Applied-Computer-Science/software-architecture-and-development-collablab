@@ -1,41 +1,48 @@
-name: Deploy to Heroku
+name: CI/CD Pipeline for Heroku
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - "Backend/**"
-      - "Frontend/**"
-      - ".github/workflows/deploy.yml"
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Define your Heroku app names (using shorter names due to character limits)
+  HEROKU_API_GATEWAY: cook-assist-api
+  HEROKU_USER_AUTH: cook-assist-auth
+  HEROKU_USER_MANAGEMENT: cook-assist-user
+  HEROKU_RECIPE_ANALYTICS: cook-assist-analytics
+  HEROKU_RECIPE_VAULT: cook-assist-vault
+  HEROKU_FRONTEND: cook-assist-front
 
 jobs:
-  deploy:
+  build:
+    name: Build and Push Docker Images to Heroku
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          node-version: 22
 
-      - name: Log in to Heroku Container Registry
-        uses: akshnz/heroku-login@v2
-        with:
-          api_key: ${{ secrets.HEROKU_API_KEY }}
+      # Install the Heroku CLI (required for heroku container:* commands)
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Build and Push Backend Services to Heroku Container Registry
+      # Explicit Docker login to Heroku Container Registry
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
+
+      - name: Build and Push Services to Heroku
         run: |
           services=(
             "api-gateway cook-assist-api"
@@ -44,36 +51,59 @@ jobs:
             "recipe-analytics cook-assist-analytics"
             "recipe-vault cook-assist-vault"
           )
-          
+
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
+            echo "Checking stack for $app..."
+
+            # Check current stack and set to 'container' if necessary
+            heroku stack -a $app
+            heroku stack:set container -a $app
+
+            # Wait a bit for stack change to take effect and restart app
+            echo "Restarting $app to apply container stack..."
+            heroku restart -a $app
+
+            # Verify that the stack was successfully set to container
+            heroku stack -a $app
+
             echo "Building and pushing $dir to $app..."
             cd Backend/services/$dir
             heroku container:push web -a $app
-            if [ $? -eq 0 ]; then
-              echo "$app successfully pushed. Releasing..."
-              heroku container:release web -a $app
-            else
-              echo "Error pushing $app. Skipping release."
+
+            # Add check for successful container push before release
+            IMAGE_STATUS=$(heroku container:images -a $app | grep "web")
+            if [[ -z "$IMAGE_STATUS" ]]; then
+              echo "Error: No Docker image found for $app. Exiting deployment."
               exit 1
             fi
-            cd - # Return to previous directory
+
+            heroku container:release web -a $app
+            cd - # Return to the previous directory
           done
 
-      - name: Build and Push Frontend to Heroku Container Registry
-        run: |
+          # Frontend
+          echo "Checking stack for frontend..."
+          heroku stack -a ${{ env.HEROKU_FRONTEND }}
+          heroku stack:set container -a ${{ env.HEROKU_FRONTEND }}
+
+          # Wait a bit for stack change to take effect and restart frontend
+          echo "Restarting frontend to apply container stack..."
+          heroku restart -a ${{ env.HEROKU_FRONTEND }}
+
+          # Verify that the stack was successfully set to container
+          heroku stack -a ${{ env.HEROKU_FRONTEND }}
+
           echo "Building and pushing frontend..."
           cd Frontend
-          heroku container:push web -a cook-assist-front
-          if [ $? -eq 0 ]; then
-            echo "Frontend successfully pushed. Releasing..."
-            heroku container:release web -a cook-assist-front
-          else
-            echo "Error pushing frontend. Skipping release."
+          heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
+
+          # Add check for successful container push before release
+          IMAGE_STATUS=$(heroku container:images -a ${{ env.HEROKU_FRONTEND }} | grep "web")
+          if [[ -z "$IMAGE_STATUS" ]]; then
+            echo "Error: No Docker image found for frontend. Exiting deployment."
             exit 1
           fi
-          cd - # Return to previous directory
 
-      - name: Clean up Docker images
-        run: |
-          docker system prune -af
+          heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
+          cd - # Return to the previous directory
