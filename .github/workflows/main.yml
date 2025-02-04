@@ -58,9 +58,8 @@ jobs:
             cd Backend/services/$dir
             heroku container:push web -a $app
 
-            # Add check for successful container push before release
-            IMAGE_STATUS=$(heroku container:images -a $app | grep "web")
-            if [[ -z "$IMAGE_STATUS" ]]; then
+            # Check if the Docker image exists before releasing it
+            if ! docker images | grep -q "registry.heroku.com/$app/web"; then
               echo "Error: No Docker image found for $app. Exiting deployment."
               exit 1
             fi
@@ -74,9 +73,8 @@ jobs:
           cd Frontend
           heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
 
-          # Add check for successful container push before release
-          IMAGE_STATUS=$(heroku container:images -a ${{ env.HEROKU_FRONTEND }} | grep "web")
-          if [[ -z "$IMAGE_STATUS" ]]; then
+          # Check if the Docker image exists before releasing it
+          if ! docker images | grep -q "registry.heroku.com/${{ env.HEROKU_FRONTEND }}/web"; then
             echo "Error: No Docker image found for frontend. Exiting deployment."
             exit 1
           fi
