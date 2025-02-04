@@ -30,15 +30,17 @@ jobs:
         with:
           node-version: 22
 
-      # Install the Heroku CLI
+      # (Optional) Install Heroku CLI if needed for subsequent commands
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
+      # Explicit Docker login to Heroku Container Registry
       - name: Login to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
+        run: |
+          echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
 
       # Build and push API Gateway image
       - name: Build and Push API Gateway
