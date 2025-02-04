@@ -112,30 +112,72 @@ export default {
   },
   methods: {
     async loadRecipeData() {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await apiClient.get(`/${this.recipeId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await apiClient.get(`/${this.recipeId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-        const recipe = response.data;
-        this.recipe.title = recipe.title;
-        this.recipe.description = recipe.description;
-        this.recipe.servings = recipe.servings;
-        this.recipe.prepTime = recipe.prepTime;
-        this.recipe.category = recipe.category;
-        this.recipe.ingredients = recipe.ingredients.join(", ");
-        this.recipe.instructions = recipe.instructions;
-      } catch (error) {
-        console.error("Error fetching recipe data:", error);
-      }
-    },
-    handleFileUpload(event) {
+    const recipe = response.data;
+    this.recipe.title = recipe.title;
+    this.recipe.description = recipe.description;
+    this.recipe.servings = recipe.servings;
+    this.recipe.prepTime = recipe.prepTime;
+    this.recipe.category = recipe.category;
+    this.recipe.ingredients = recipe.ingredients.join(", ");
+    this.recipe.instructions = recipe.instructions;
+  } catch (error) {
+    console.error("Error fetching recipe data:", error);
+  }
+},
+handleFileUpload(event) {
       this.imageFile = event.target.files[0];
-    },
+      if (this.imageFile) {
+        this.imagePreview = URL.createObjectURL(this.imageFile);
+      }
+    }
+,
     async submitRecipe() {
-      // Logic remains the same
-    },
+  try {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      alert("You must be logged in to update a recipe.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", this.recipe.title);
+    formData.append("description", this.recipe.description);
+    formData.append("servings", this.recipe.servings);
+    formData.append("prepTime", this.recipe.prepTime);
+    formData.append("category", this.recipe.category);
+    formData.append("ingredients", JSON.stringify(this.recipe.ingredients.split(",").map(item => item.trim())));
+    formData.append("instructions", this.recipe.instructions);
+    if (this.imageFile) {
+      formData.append("image", this.imageFile);
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`, // Ensure token is sent
+      "Content-Type": "multipart/form-data",
+    };
+
+    if (this.isEditing) {
+      await apiClient.put(`/${this.recipeId}`, formData, { headers });
+      alert("Recipe updated successfully!");
+      
+    } else {
+      await apiClient.post("/", formData, { headers });
+      alert("Recipe added successfully!");
+    }
+
+    this.$router.push("/recipes");
+  } catch (error) {
+    console.error("Error submitting recipe:", error);
+    alert(error.response?.data?.message || "Failed to submit recipe.");
+  }
+},
   },
 };
 </script>
