@@ -30,77 +30,65 @@ jobs:
         with:
           node-version: 22
 
-      # (Optional) Install Heroku CLI if needed for subsequent commands
+      # Install the Heroku CLI (optional; needed for heroku container:* commands)
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Explicit Docker login to Heroku Container Registry
+      # Explicit Docker login to Heroku Container Registry (this is optional when using heroku container:push)
       - name: Login to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
 
-      # Build and push API Gateway image
+      # Build and push API Gateway using Heroku CLI
       - name: Build and Push API Gateway
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Backend/services/api-gateway/Dockerfile \
-            ./Backend/services
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Backend/services
+          heroku container:push web -a $HEROKU_APP_NAME -f api-gateway/Dockerfile
 
-      # Build and push User Authentication image
+      # Build and push User Authentication
       - name: Build and Push User Authentication
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Backend/services/user-authentication/Dockerfile \
-            ./Backend/services
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Backend/services
+          heroku container:push web -a $HEROKU_APP_NAME -f user-authentication/Dockerfile
 
-      # Build and push User Management image
+      # Build and push User Management
       - name: Build and Push User Management
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Backend/services/user-management/Dockerfile \
-            ./Backend/services
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Backend/services
+          heroku container:push web -a $HEROKU_APP_NAME -f user-management/Dockerfile
 
-      # Build and push Recipe Analytics image
+      # Build and push Recipe Analytics
       - name: Build and Push Recipe Analytics
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Backend/services/recipe-analytics/Dockerfile \
-            ./Backend/services
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Backend/services
+          heroku container:push web -a $HEROKU_APP_NAME -f recipe-analytics/Dockerfile
 
-      # Build and push Recipe Vault image
+      # Build and push Recipe Vault
       - name: Build and Push Recipe Vault
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Backend/services/recipe-vault/Dockerfile \
-            ./Backend/services
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Backend/services
+          heroku container:push web -a $HEROKU_APP_NAME -f recipe-vault/Dockerfile
 
-      # Build and push Frontend image
+      # Build and push Frontend
       - name: Build and Push Frontend
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
         run: |
-          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
-            -f Frontend/Dockerfile \
-            ./Frontend
-          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+          cd Frontend
+          heroku container:push web -a $HEROKU_APP_NAME -f Dockerfile
 
   deploy:
     name: Deploy to Heroku
