@@ -1,37 +1,44 @@
 <template>
-  <div class="recipes-page">
+  <div>
     <!-- Navbar -->
     <Navbar />
-    
-    <!-- Page Content -->
-    <div class="sectionHeading">
-      <h1>Recipes</h1>
-    </div>
-    <div class="filters">
-      <select v-model="selectedCategory" @change="fetchRecipes">
-        <option value="">All Categories</option>
-        <option>Breakfast</option>
-        <option>Lunch</option>
-        <option>Dinner</option>
-        <option>Dessert</option>
-        <option>Snack</option>
-      </select>
+    <div class="recipes-page">
+      <!-- Page Content -->
+      <div class="sectionHeading">
+        <h1>Recipes</h1>
+      </div>
+      <div class="search-filter-container">
+        <div class="filter-dropdown">
+          <select v-model="selectedCategory" @change="fetchRecipes">
+            <option value="">All Categories</option>
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Dessert</option>
+            <option>Snack</option>
+          </select>          
+        </div>
 
-      <input
-        type="text"
-        v-model="searchQuery"
-        @input="fetchRecipes"
-        placeholder="Search recipes by title"
-      />
+        <div class="search-bar">
+          <input
+            type="text"
+            v-model="searchQuery"
+            @input="fetchRecipes"
+            placeholder="Recipe name"
+          />
+          <button class="search-btn">            
+            <img src="@/assets/searchicon.png" alt="search" class="search-icon" />
+          </button>
+        </div>
+      </div>
+      <div class="product-grid">
+        <RecipeCard
+          v-for="recipe in recipes"
+          :key="recipe._id"
+          :recipe="recipe"
+        />
+      </div>
     </div>
-    <div class="product-grid">
-      <RecipeCard
-        v-for="recipe in recipes"
-        :key="recipe._id"
-        :recipe="recipe"
-      />
-    </div>
-
     <!-- Footer -->
     <Footer />
   </div>
@@ -48,7 +55,7 @@ export default {
   components: {
     RecipeCard,
     Navbar,
-    Footer, 
+    Footer,
   },
   data() {
     return {
@@ -82,6 +89,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Ensures the page takes the full viewport height */
+  padding: 40px;
 }
 
 .sectionHeading {
@@ -89,17 +97,65 @@ export default {
   padding: 1rem;
 }
 
-.filters {
+.search-filter-container {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Space between dropdown and search bar */
+  margin: 30px auto; /* Centered with some margin */
 }
 
-select,
-input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.filter-dropdown select {
+  padding: 10px;
+  border: 1px solid #f6a300; /* Orange border */
+  border-radius: 40px;
+  font-size: 16px;
+  background-color: white;
+  outline: none;
+  text-align: center;
+  width: 178px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23777'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center; 
+  background-size: 16px 16px;
+  color: #333;
+  cursor: pointer;
+  appearance: none;
+  height: 47.2px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #f6a300; /* Orange border */
+  border-radius: 40px;
+  overflow: hidden;
+  background-color: white;
+  height: 47.2px;
+  width: 420px;
+}
+
+.search-bar input {
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  flex: 1; /* Fills the available space */
+}
+
+.search-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.search-icon {
+  font-size: 18px;
+  color: #333;
 }
 
 .product-grid {
@@ -112,7 +168,6 @@ input {
 
 /* Ensures footer stays at the bottom */
 footer {
-  margin-top: auto; 
+  margin-top: auto;
 }
-
 </style>

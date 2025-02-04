@@ -104,5 +104,6 @@ export default {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  padding-top: 20px;
 }
 </style>

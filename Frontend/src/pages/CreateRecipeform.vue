@@ -75,16 +75,18 @@
         </form>
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar.vue";
+import Footer from "../components/Footer.vue";
 
 export default {
   name: "CreateRecipeForm",
-  components: { Navbar },
+  components: { Navbar, Footer },
   data() {
     return {
       isEditing: false,
