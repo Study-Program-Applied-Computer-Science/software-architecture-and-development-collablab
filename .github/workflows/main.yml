@@ -54,9 +54,12 @@ jobs:
 
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
-            echo "Setting Heroku stack to 'container' for $app..."
+            echo "Checking stack for $app..."
+
+            # Check current stack and set to 'container' if necessary
+            heroku stack -a $app
             heroku stack:set container -a $app
-            
+
             echo "Building and pushing $dir to $app..."
             cd Backend/services/$dir
             heroku container:push web -a $app
@@ -65,7 +68,8 @@ jobs:
           done
 
           # Frontend
-          echo "Setting Heroku stack to 'container' for frontend..."
+          echo "Checking stack for frontend..."
+          heroku stack -a ${{ env.HEROKU_FRONTEND }}
           heroku stack:set container -a ${{ env.HEROKU_FRONTEND }}
 
           echo "Building and pushing frontend..."
