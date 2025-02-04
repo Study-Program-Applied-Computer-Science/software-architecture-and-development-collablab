@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  # Define Heroku app names
+  # Define your Heroku app names (using shorter names due to character limits)
   HEROKU_API_GATEWAY: cook-assist-api
   HEROKU_USER_AUTH: cook-assist-auth
   HEROKU_USER_MANAGEMENT: cook-assist-user
@@ -30,43 +30,49 @@ jobs:
         with:
           node-version: 22
 
+      # Install the Heroku CLI (required for heroku container:* commands)
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
+      # Explicit Docker login to Heroku Container Registry
       - name: Login to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
 
-      # Function to build, push, and verify images
-      - name: Build and Push Services
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      - name: Build and Push Services to Heroku
         run: |
           services=(
-            "api-gateway ${{ env.HEROKU_API_GATEWAY }}"
-            "user-authentication ${{ env.HEROKU_USER_AUTH }}"
-            "user-management ${{ env.HEROKU_USER_MANAGEMENT }}"
-            "recipe-analytics ${{ env.HEROKU_RECIPE_ANALYTICS }}"
-            "recipe-vault ${{ env.HEROKU_RECIPE_VAULT }}"
+            "api-gateway cook-assist-api"
+            "user-authentication cook-assist-auth"
+            "user-management cook-assist-user"
+            "recipe-analytics cook-assist-analytics"
+            "recipe-vault cook-assist-vault"
           )
 
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
+            echo "Setting Heroku stack to 'container' for $app..."
+            heroku stack:set container -a $app
+            
             echo "Building and pushing $dir to $app..."
             cd Backend/services/$dir
             heroku container:push web -a $app
-            heroku container:info web -a $app
-            cd - # Return to previous directory
+            heroku container:release web -a $app
+            cd - # Return to the previous directory
           done
 
           # Frontend
+          echo "Setting Heroku stack to 'container' for frontend..."
+          heroku stack:set container -a ${{ env.HEROKU_FRONTEND }}
+
           echo "Building and pushing frontend..."
           cd Frontend
           heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
-          heroku container:info web -a ${{ env.HEROKU_FRONTEND }}
+          heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
+          cd - # Return to the previous directory
 
   deploy:
     name: Deploy to Heroku
@@ -77,26 +83,44 @@ jobs:
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku Container Registry
+      - name: Authenticate with Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
+          echo $HEROKU_API_KEY | heroku auth:token
 
-      - name: Release Services
+      - name: Release API Gateway on Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          services=(
-            "${{ env.HEROKU_API_GATEWAY }}"
-            "${{ env.HEROKU_USER_AUTH }}"
-            "${{ env.HEROKU_USER_MANAGEMENT }}"
-            "${{ env.HEROKU_RECIPE_ANALYTICS }}"
-            "${{ env.HEROKU_RECIPE_VAULT }}"
-            "${{ env.HEROKU_FRONTEND }}"
-          )
+          HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
 
-          for app in "${services[@]}"; do
-            echo "Releasing $app..."
-            heroku container:release web -a $app
-          done
+      - name: Release User Authentication on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release User Management on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Recipe Analytics on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Recipe Vault on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Frontend on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
