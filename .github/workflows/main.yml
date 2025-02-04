@@ -1,0 +1,137 @@
+name: CI/CD Pipeline for Heroku
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Define your Heroku app names (adjust these as needed)
+  HEROKU_API_GATEWAY: cooking-assistant-api-gateway
+  HEROKU_USER_AUTH: cooking-assistant-user-authentication
+  HEROKU_USER_MANAGEMENT: cooking-assistant-user-management
+  HEROKU_RECIPE_ANALYTICS: cooking-assistant-recipe-analytics
+  HEROKU_RECIPE_VAULT: cooking-assistant-recipe-vault
+  HEROKU_FRONTEND: cooking-assistant-frontend
+
+jobs:
+  build:
+    name: Build and Push Docker Images to Heroku
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Login to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      # Build and push API Gateway image
+      - name: Build and Push API Gateway
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Backend/services/api-gateway/Dockerfile \
+            ./Backend/services
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+      # Build and push User Authentication image
+      - name: Build and Push User Authentication
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Backend/services/user-authentication/Dockerfile \
+            ./Backend/services
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+      # Build and push User Management image
+      - name: Build and Push User Management
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Backend/services/user-management/Dockerfile \
+            ./Backend/services
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+      # Build and push Recipe Analytics image
+      - name: Build and Push Recipe Analytics
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Backend/services/recipe-analytics/Dockerfile \
+            ./Backend/services
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+      # Build and push Recipe Vault image
+      - name: Build and Push Recipe Vault
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Backend/services/recipe-vault/Dockerfile \
+            ./Backend/services
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+      # Build and push Frontend image
+      - name: Build and Push Frontend
+        env:
+          HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
+        run: |
+          docker build -t registry.heroku.com/$HEROKU_APP_NAME/web \
+            -f Frontend/Dockerfile \
+            ./Frontend
+          docker push registry.heroku.com/$HEROKU_APP_NAME/web
+
+  deploy:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Release API Gateway on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release User Authentication on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release User Management on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Recipe Analytics on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Recipe Vault on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
+
+      - name: Release Frontend on Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
+        run: heroku container:release web -a $HEROKU_APP_NAME
