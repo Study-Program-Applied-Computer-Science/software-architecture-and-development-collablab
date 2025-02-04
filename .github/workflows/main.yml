@@ -56,12 +56,28 @@ jobs:
             IFS=" " read -r dir app <<< "$service"
             echo "Building and pushing $app..."
             heroku container:push web -a $app
+
+            # Check if the image exists before releasing
+            IMAGE_STATUS=$(heroku container:images -a $app | grep "web")
+            if [[ -z "$IMAGE_STATUS" ]]; then
+              echo "Error: No Docker image found for $app. Exiting deployment."
+              exit 1
+            fi
+
             heroku container:release web -a $app
           done
 
           # Frontend
           echo "Building and pushing frontend..."
           heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
+
+          # Check if the image exists before releasing
+          IMAGE_STATUS=$(heroku container:images -a ${{ env.HEROKU_FRONTEND }} | grep "web")
+          if [[ -z "$IMAGE_STATUS" ]]; then
+            echo "Error: No Docker image found for frontend. Exiting deployment."
+            exit 1
+          fi
+
           heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
 
   deploy:
@@ -113,4 +129,4 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
+        run: heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
