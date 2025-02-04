@@ -1,9 +1,7 @@
 <template>
 <div class="page-container">
-  <!-- Navbar -->
   <Navbar />
 
-  <!-- Main Content -->
   <div class="smart-pantry">
     <h1>Smart Pantry</h1>
     <p>Add the only ingredients you have and find recipes you can make!</p> <br>
@@ -49,7 +47,6 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <Footer />
 </div>
 </template>
@@ -60,6 +57,9 @@ import RecipeCard from "../components/RecipeCard.vue";
 import { apiClient } from "@/api/index";
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
+import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import { jwtDecode } from "jwt-decode";
 
 export default {
   name: "SmartPantry",
@@ -68,58 +68,101 @@ export default {
     Navbar,   
     Footer, 
   },
-  data() {
-    return {
-      ingredients: [""], // Start with one input field
-      recipes: [],
-      loading: false,
-    };
-  },
-  methods: {
-    addIngredientField() {
-      this.ingredients.push("");
-    },
-    removeIngredientField(index) {
-      this.ingredients.splice(index, 1); // Remove the specific ingredient field
-    },
-    async searchRecipes() {
-      this.loading = true;
+  setup() {
+    const router = useRouter();
+    const ingredients = ref([""]);
+    const recipes = ref([]);
+    const loading = ref(false);
+
+    //Ensure only logged-in users can access this page
+    onMounted(() => {
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        console.warn("User not logged in. Redirecting to login...");
+        router.push("/login");
+        return;
+      }
+
       try {
+        const payload = jwtDecode(token);
+        console.log("Logged-in User:", payload.user);
+      } catch (error) {
+        console.error("Invalid token. Logging out user.");
+        localStorage.removeItem("authToken");
+        router.push("/login");
+      }
+    });
+
+    // Add Ingredient Field
+    const addIngredientField = () => {
+      ingredients.value.push("");
+    };
+
+    // Remove Ingredient Field
+    const removeIngredientField = (index) => {
+      ingredients.value.splice(index, 1);
+    };
+
+    // Search Recipes (Authenticated Users Only)
+    const searchRecipes = async () => {
+      loading.value = true;
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.error("⚠️ No token found. Redirecting to login.");
+          router.push("/login");
+          return;
+        }
+
         const response = await apiClient.post(
           "/search-by-ingredients",
           {
-            ingredients: this.ingredients
-              .filter((ingredient) => ingredient.trim() !== "") // Remove empty strings
-              .map((ingredient) => ingredient.trim().toLowerCase()), // Normalize input
+            ingredients: ingredients.value
+              .filter((ingredient) => ingredient.trim() !== "")
+              .map((ingredient) => ingredient.trim().toLowerCase()),
+          },
+          {
+            // Securing API with Auth Token
+            headers: { Authorization: `Bearer ${token}` }, 
           }
         );
 
         if (response.data && response.data.success) {
-          this.recipes = response.data.recipes;
+          recipes.value = response.data.recipes;
         } else {
-          this.recipes = [];
+          recipes.value = [];
         }
       } catch (error) {
-        console.error("Error fetching recipes:", error);
-        this.recipes = [];
+        console.error("Error fetching recipes:", error.response?.data || error);
+        recipes.value = [];
       } finally {
-        this.loading = false;
+        loading.value = false;
       }
-    },
+    };
+
+    return {
+      ingredients,
+      recipes,
+      loading,
+      addIngredientField,
+      removeIngredientField,
+      searchRecipes,
+    };
   },
 };
 </script>
+
 <style scoped>
-/* Ensure the entire page is filled */
+
 .page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100vh;
 }
 
-/* Main content should stretch to fill the space between navbar and footer */
 .smart-pantry {
-  flex: 1; /* Make this section flexible to fill remaining space */
+  flex: 1;
   text-align: center;
   margin: 20px;
 }
@@ -160,7 +203,7 @@ button {
   margin: 10px;
   padding: 10px 25px;
   cursor: pointer;
-  border-radius: 10px; /* Rounded corners */
+  border-radius: 10px;
   border: none;
   font-size: 16px;
 }
@@ -170,7 +213,7 @@ button.primaryButton {
   color: white;
 }
 
-button.secondryButton {
+button.secondaryButton {
   background-color: white;
   color: #ff8c00;
   border: 2px solid #FF8C00;
@@ -186,6 +229,4 @@ button.secondryButton {
   justify-content: center;
   gap: 20px;
 }
-
-
 </style>
