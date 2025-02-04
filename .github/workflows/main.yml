@@ -54,33 +54,15 @@ jobs:
 
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
-            echo "Building and pushing $dir to $app..."
-            cd Backend/services/$dir
+            echo "Building and pushing $app..."
             heroku container:push web -a $app
-
-            # Check if the Docker image exists before releasing it
-            if ! docker images | grep -q "registry.heroku.com/$app/web"; then
-              echo "Error: No Docker image found for $app. Exiting deployment."
-              exit 1
-            fi
-
             heroku container:release web -a $app
-            cd - # Return to the previous directory
           done
 
           # Frontend
           echo "Building and pushing frontend..."
-          cd Frontend
           heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
-
-          # Check if the Docker image exists before releasing it
-          if ! docker images | grep -q "registry.heroku.com/${{ env.HEROKU_FRONTEND }}/web"; then
-            echo "Error: No Docker image found for frontend. Exiting deployment."
-            exit 1
-          fi
-
           heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
-          cd - # Return to the previous directory
 
   deploy:
     name: Deploy to Heroku
