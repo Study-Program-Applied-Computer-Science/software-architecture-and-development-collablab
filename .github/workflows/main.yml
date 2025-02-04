@@ -55,13 +55,13 @@ jobs:
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
             echo "Building and pushing $app..."
-            heroku container:push web -a $app --wait
+            heroku container:push web -a $app
             heroku container:release web -a $app
           done
 
           # Frontend
           echo "Building and pushing frontend..."
-          heroku container:push web -a ${{ env.HEROKU_FRONTEND }} --wait
+          heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
           heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
 
   deploy:
