@@ -1,48 +1,40 @@
-name: CI/CD Pipeline for Heroku
+name: Deploy to Heroku
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
-env:
-  # Define your Heroku app names (using shorter names due to character limits)
-  HEROKU_API_GATEWAY: cook-assist-api
-  HEROKU_USER_AUTH: cook-assist-auth
-  HEROKU_USER_MANAGEMENT: cook-assist-user
-  HEROKU_RECIPE_ANALYTICS: cook-assist-analytics
-  HEROKU_RECIPE_VAULT: cook-assist-vault
-  HEROKU_FRONTEND: cook-assist-front
+    paths:
+      - "Backend/**"
+      - "Frontend/**"
+      - ".github/workflows/deploy.yml"
 
 jobs:
-  build:
-    name: Build and Push Docker Images to Heroku
+  deploy:
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Setup Node.js 22
-        uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
         with:
-          node-version: 22
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
-      # Install the Heroku CLI (required for heroku container:* commands)
-      - name: Install Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
+      - name: Log in to Heroku Container Registry
+        uses: akshnz/heroku-login@v2
+        with:
+          api_key: ${{ secrets.HEROKU_API_KEY }}
 
-      # Explicit Docker login to Heroku Container Registry
-      - name: Login to Heroku Container Registry
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
-
-      - name: Build and Push Services to Heroku
+      - name: Build and Push Backend Services to Heroku Container Registry
         run: |
           services=(
             "api-gateway cook-assist-api"
@@ -51,94 +43,36 @@ jobs:
             "recipe-analytics cook-assist-analytics"
             "recipe-vault cook-assist-vault"
           )
-
+          
           for service in "${services[@]}"; do
             IFS=" " read -r dir app <<< "$service"
-            echo "Checking stack for $app..."
-
-            # Check current stack and set to 'container' if necessary
-            heroku stack -a $app
-            heroku stack:set container -a $app
-
-            # Wait a bit for stack change to take effect and restart app
-            echo "Restarting $app to apply container stack..."
-            heroku restart -a $app
-
-            # Verify that the stack was successfully set to container
-            heroku stack -a $app
-
             echo "Building and pushing $dir to $app..."
             cd Backend/services/$dir
             heroku container:push web -a $app
-            heroku container:release web -a $app
-            cd - # Return to the previous directory
+            if [ $? -eq 0 ]; then
+              echo "$app successfully pushed. Releasing..."
+              heroku container:release web -a $app
+            else
+              echo "Error pushing $app. Skipping release."
+              exit 1
+            fi
+            cd - # Return to previous directory
           done
 
-          # Frontend
-          echo "Checking stack for frontend..."
-          heroku stack -a ${{ env.HEROKU_FRONTEND }}
-          heroku stack:set container -a ${{ env.HEROKU_FRONTEND }}
-
-          # Wait a bit for stack change to take effect and restart frontend
-          echo "Restarting frontend to apply container stack..."
-          heroku restart -a ${{ env.HEROKU_FRONTEND }}
-
-          # Verify that the stack was successfully set to container
-          heroku stack -a ${{ env.HEROKU_FRONTEND }}
-
+      - name: Build and Push Frontend to Heroku Container Registry
+        run: |
           echo "Building and pushing frontend..."
           cd Frontend
-          heroku container:push web -a ${{ env.HEROKU_FRONTEND }}
-          heroku container:release web -a ${{ env.HEROKU_FRONTEND }}
-          cd - # Return to the previous directory
+          heroku container:push web -a cook-assist-front
+          if [ $? -eq 0 ]; then
+            echo "Frontend successfully pushed. Releasing..."
+            heroku container:release web -a cook-assist-front
+          else
+            echo "Error pushing frontend. Skipping release."
+            exit 1
+          fi
+          cd - # Return to previous directory
 
-  deploy:
-    name: Deploy to Heroku
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Install Heroku CLI
+      - name: Clean up Docker images
         run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-
-      - name: Authenticate with Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          echo $HEROKU_API_KEY | heroku auth:token
-
-      - name: Release API Gateway on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
-
-      - name: Release User Authentication on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
-
-      - name: Release User Management on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
-
-      - name: Release Recipe Analytics on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
-
-      - name: Release Recipe Vault on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
-
-      - name: Release Frontend on Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
-        run: heroku container:release web -a $HEROKU_APP_NAME
+          docker system prune -af
