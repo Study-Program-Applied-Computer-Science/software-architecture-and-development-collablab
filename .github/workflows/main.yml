@@ -41,6 +41,7 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
+          echo "Logged in successfully to Heroku Container Registry."
 
       # Build, Push, and Deploy API Gateway
       - name: Build, Push, and Deploy API Gateway
