@@ -9,13 +9,13 @@ on:
       - main
 
 env:
-  # Define your Heroku app names (adjust these as needed)
-  HEROKU_API_GATEWAY: cooking-assistant-api-gateway
-  HEROKU_USER_AUTH: cooking-assistant-user-authentication
-  HEROKU_USER_MANAGEMENT: cooking-assistant-user-management
-  HEROKU_RECIPE_ANALYTICS: cooking-assistant-recipe-analytics
-  HEROKU_RECIPE_VAULT: cooking-assistant-recipe-vault
-  HEROKU_FRONTEND: cooking-assistant-frontend
+  # Define your Heroku app names (using shorter names due to character limits)
+  HEROKU_API_GATEWAY: cook-assist-api
+  HEROKU_USER_AUTH: cook-assist-auth
+  HEROKU_USER_MANAGEMENT: cook-assist-user
+  HEROKU_RECIPE_ANALYTICS: cook-assist-analytics
+  HEROKU_RECIPE_VAULT: cook-assist-vault
+  HEROKU_FRONTEND: cook-assist-front
 
 jobs:
   build:
@@ -30,65 +30,65 @@ jobs:
         with:
           node-version: 22
 
-      # Install the Heroku CLI (optional; needed for heroku container:* commands)
+      # Install the Heroku CLI (required for heroku container:* commands)
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Explicit Docker login to Heroku Container Registry (this is optional when using heroku container:push)
+      # Explicit Docker login to Heroku Container Registry
       - name: Login to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           echo $HEROKU_API_KEY | docker login --username=_ --password-stdin registry.heroku.com
 
-      # Build and push API Gateway using Heroku CLI
+      # Build and push API Gateway image
       - name: Build and Push API Gateway
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_API_GATEWAY }}
         run: |
-          cd Backend/services
-          heroku container:push web -a $HEROKU_APP_NAME -f api-gateway/Dockerfile
+          cd Backend/services/api-gateway
+          heroku container:push web -a $HEROKU_APP_NAME
 
-      # Build and push User Authentication
+      # Build and push User Authentication image
       - name: Build and Push User Authentication
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_USER_AUTH }}
         run: |
-          cd Backend/services
-          heroku container:push web -a $HEROKU_APP_NAME -f user-authentication/Dockerfile
+          cd Backend/services/user-authentication
+          heroku container:push web -a $HEROKU_APP_NAME
 
-      # Build and push User Management
+      # Build and push User Management image
       - name: Build and Push User Management
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_USER_MANAGEMENT }}
         run: |
-          cd Backend/services
-          heroku container:push web -a $HEROKU_APP_NAME -f user-management/Dockerfile
+          cd Backend/services/user-management
+          heroku container:push web -a $HEROKU_APP_NAME
 
-      # Build and push Recipe Analytics
+      # Build and push Recipe Analytics image
       - name: Build and Push Recipe Analytics
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_ANALYTICS }}
         run: |
-          cd Backend/services
-          heroku container:push web -a $HEROKU_APP_NAME -f recipe-analytics/Dockerfile
+          cd Backend/services/recipe-analytics
+          heroku container:push web -a $HEROKU_APP_NAME
 
-      # Build and push Recipe Vault
+      # Build and push Recipe Vault image
       - name: Build and Push Recipe Vault
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_RECIPE_VAULT }}
         run: |
-          cd Backend/services
-          heroku container:push web -a $HEROKU_APP_NAME -f recipe-vault/Dockerfile
+          cd Backend/services/recipe-vault
+          heroku container:push web -a $HEROKU_APP_NAME
 
-      # Build and push Frontend
+      # Build and push Frontend image
       - name: Build and Push Frontend
         env:
           HEROKU_APP_NAME: ${{ env.HEROKU_FRONTEND }}
         run: |
           cd Frontend
-          heroku container:push web -a $HEROKU_APP_NAME -f Dockerfile
+          heroku container:push web -a $HEROKU_APP_NAME
 
   deploy:
     name: Deploy to Heroku
