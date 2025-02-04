@@ -1,25 +1,21 @@
 # Use the official Node.js 22-alpine image as the base image
 FROM node:22-alpine
 
-# Set the working directory to the correct location where package.json resides
-WORKDIR /usr/src/app/user-authentication
+# Set the working directory to /usr/src
+WORKDIR /usr/src
 
-# Copy package.json and package-lock.json into the working directory
-COPY user-authentication/package*.json ./
+# Copy the entire build context (which should be set to Backend/services)
+# into /usr/src/services in the container. This preserves your local structure.
+COPY . /usr/src/services
 
-# Install dependencies
+# Change working directory to the api-gateway folder where package.json lives
+WORKDIR /usr/src/services/api-gateway
+
+# Install dependencies from package.json
 RUN npm install
 
-# Copy the rest of the application code
-COPY user-authentication/ ./
+# Expose the port the application listens on
+EXPOSE 5005
 
-# Optionally, if you need to copy shared files (adjust paths accordingly)
-COPY ../consts.js ./
-COPY ../logging.js ./
-COPY ../correlationId.js ./
-
-# Expose the port the app runs on
-EXPOSE 5002
-
-# Start the application
+# Start the application (this runs npm start as defined in package.json)
 CMD ["npm", "start"]

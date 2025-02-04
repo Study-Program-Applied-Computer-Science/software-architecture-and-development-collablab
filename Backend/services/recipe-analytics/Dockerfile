@@ -2,16 +2,16 @@
 FROM node:22-alpine
 
 # Set the working directory to the correct location where package.json resides
-WORKDIR /usr/src/app/recipe-vault
+WORKDIR /usr/src/app/recipe-analytics
 
 # Copy package.json and package-lock.json into the working directory
-COPY recipe-vault/package*.json ./
+COPY recipe-analytics/package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
-COPY recipe-vault/ ./
+COPY recipe-analytics/ ./
 
 # Optionally, if you need to copy shared files (adjust paths accordingly)
 COPY ../consts.js ./
@@ -19,7 +19,7 @@ COPY ../logging.js ./
 COPY ../correlationId.js ./
 
 # Expose the port the app runs on
-EXPOSE 5004
+EXPOSE 5003
 
 # Start the application
 CMD ["npm", "start"]
