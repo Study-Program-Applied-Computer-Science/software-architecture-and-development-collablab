@@ -1,34 +1,35 @@
-Software Architecture and Development CollabLab
+# Software Architecture and Development CollabLab
 
-This repository is created by GitHub Classroom for the Software Architecture and Development Collab Lab.
+This repository is created by GitHub Classroom for the software architecture and development collab lab.
 
-Table of Contents
-Introduction
-Technologies Used
-Installation
-Usage
-Project Structure
-Contributing
-License
-Introduction
-The Software Architecture and Development CollabLab project is focused on the development and architecture of software applications. This project demonstrates best practices in software development using modern technologies like JavaScript and Vue.
+## Table of Contents
+- [Introduction](#introduction)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-Technologies Used
+## Introduction
+The **Software Architecture and Development CollabLab** project is focused on the development and architecture of software applications. This project demonstrates best practices in software development using modern technologies like JavaScript and Vue.
+
+## Technologies Used
 The project is composed of the following technologies:
+- **JavaScript**: 48.8%
+- **Vue**: 47.2%
+- **Dockerfile**: 3.2%
+- **Other**: 0.8%
 
-JavaScript: 48.8%
-Vue: 47.2%
-Dockerfile: 3.2%
-Other: 0.8%
-Installation
+## Installation
 To set up the project locally, follow these steps:
 
-Clone the repository:
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/Study-Program-Applied-Computer-Science/software-architecture-and-development-collablab.git
+   cd software-architecture-and-development-collablab
 
-sh
-git clone https://github.com/Study-Program-Applied-Computer-Science/software-architecture-and-development-collablab.git
-cd software-architecture-and-development-collablab
-Install dependencies:
+   Install dependencies:
 
 sh
 npm install
@@ -68,4 +69,5 @@ Open a pull request.
 License
 This project is not licensed.
 
-Feel free to customize and add more details as needed. If you have specific sections or details you want to include, let me know!
+Code
+Feel free to customize and add more details as needed. If
