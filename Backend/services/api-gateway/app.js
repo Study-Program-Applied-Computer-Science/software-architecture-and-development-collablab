@@ -17,12 +17,19 @@ dotenv.config();
 const app = express();
 
 // Enable CORS
-app.use(
-  cors({
-    origin: "http://localhost:8080", // Allow frontend
-    credentials: true, // Allow cookies and authentication headers
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    // Allow a list of specific origins
+    const allowedOrigins = ['http://localhost:5006', 'http://localhost:8080','http://188.166.164.220:5006'];
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 // Middleware to generate or retrieve correlation IDs
 app.use(correlationIdMiddleware);
