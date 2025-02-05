@@ -3,7 +3,7 @@ const axios = require("axios");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-const AUTH_SERVICE_URL = "http://localhost:5002/api/auth"; // Auth Service URL
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:5002/api/auth"; // Auth Service URL
 
 // Middleware to check if the user is an admin
 const isAdmin = (req, res, next) => {

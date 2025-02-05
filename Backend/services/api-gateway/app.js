@@ -5,7 +5,7 @@ const rateLimit = require("express-rate-limit");
 const path = require("path");
 const dotenv = require("dotenv");
 const logger = require("../../services/logging"); // Import your logger
-const { correlationIdMiddleware } = require("../../services/correlationId"); // Import your correlation ID middleware
+const { correlationIdMiddleware, getCorrelationId } = require("../../services/correlationId"); // Import your correlation ID middleware
 
 // Swagger dependencies
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
     message: "Incoming request",
     method: req.method,
     url: req.originalUrl,
-    correlationId: req.headers["x-correlation-id"] || "N/A",
+    correlationId: getCorrelationId() || "N/A",
   });
   next();
 });

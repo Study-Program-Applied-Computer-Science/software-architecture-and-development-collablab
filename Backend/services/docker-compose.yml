@@ -41,6 +41,7 @@ services:
     environment:
       - PORT=5001
       - MONGO_URI=${MONGO_URI}
+      - AUTH_SERVICE_URL=http://user-authentication:5002/api/auth
       - JWT_SECRET=${JWT_SECRET}
 
   recipe-analytics:
