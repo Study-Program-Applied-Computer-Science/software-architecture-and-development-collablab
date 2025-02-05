@@ -67,29 +67,29 @@ export default {
         });
 
         if (!response.data.token) {
-          throw new Error("⚠️ No token received.");
+          throw new Error("No token received.");
         }
 
-        console.log("✅ Login successful:", response.data);
+        console.log("Login successful:", response.data);
 
-        // ✅ Store token correctly
+        // Store token correctly
         localStorage.setItem("authToken", response.data.token);
 
-        // ✅ Decode JWT token
+        // Decode JWT token
         const decodedToken = jwtDecode(response.data.token);
         const userRole = decodedToken.user.role;
         localStorage.setItem("userRole", userRole);
 
-        console.log("🔐 User role:", userRole);
+        console.log("User role:", userRole);
 
-        // ✅ Redirect based on user role
+        // Redirect based on user role
         if (userRole === "admin") {
           this.$router.push("/adminanalytics");
         } else {
           this.$router.push("/");
         }
       } catch (error) {
-        console.error("❌ Login failed:", error.response?.data || error);
+        console.error("Login failed:", error.response?.data || error);
         this.errorMessage =
           error.response?.data?.msg || "Login failed. Please try again.";
       }

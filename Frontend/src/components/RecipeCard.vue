@@ -105,9 +105,7 @@ export default {
 .view-more-btn:hover {
   background-color: #733f00;
 }
-.edit-btn {
-  background-color: #007bff;
-}
+
 .delete-btn {
   background-color: red;
 }

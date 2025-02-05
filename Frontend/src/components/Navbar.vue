@@ -1,8 +1,7 @@
 <template>
   <header class="header">
     <div class="container">
-      <!-- Add Logo -->
-      <div class="logo1">
+           <div class="logo1">
         <router-link to="/">
           <img src="@/assets/logo1.png" alt="Cooking Assistant Logo" class="logo1-image" />
         </router-link>

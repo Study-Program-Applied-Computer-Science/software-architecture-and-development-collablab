@@ -4,8 +4,8 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
 const dotenv = require("dotenv");
-const logger = require("../../services/logging"); // Import your logger
-const { correlationIdMiddleware, getCorrelationId } = require("../../services/correlationId"); // Import your correlation ID middleware
+const logger = require("../../services/logging"); 
+const { correlationIdMiddleware } = require("../../services/correlationId"); 
 
 // Swagger dependencies
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -128,7 +128,7 @@ const swaggerOptions = {
       },
     ],
   },
-  // Use this file's inline Swagger docs:
+  
   apis: [path.join(__dirname, "*.js")],
 };
 

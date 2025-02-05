@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const path = require("path");
-const analyticsRoutes = require("./routes/routes"); // Ensure this path is correct
+const analyticsRoutes = require("./routes/routes"); 
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -80,8 +80,7 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  // Use the absolute path we built above
-  apis: [apisPath],
+    apis: [apisPath],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
@@ -117,4 +116,4 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5003;
-app.listen(PORT, () => console.log(`🚀 Recipe Analytics Service running on port ${PORT}`));
+app.listen(PORT, () => console.log(` Recipe Analytics Service running on port ${PORT}`));

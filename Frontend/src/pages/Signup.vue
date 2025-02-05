@@ -135,13 +135,13 @@ export default {
 /* Right Section */
 .auth-form-container {
   flex: 1;
-  background-color: #ffe6cc; /* Light Orange */
+  background-color: #ffe6cc; 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Form Styling */
+
 .auth-form {
   width: 80%;
   max-width: 400px;
@@ -207,7 +207,7 @@ button {
 }
 
 button:hover {
-  background-color: #d35400; /* Darker Orange */
+  background-color: #d35400; 
 }
 
 p {

@@ -1,7 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const cls = require("cls-hooked");
 
-// Create a namespace for storing correlation IDs
+// Creating a namespace for storing correlation IDs
 const namespace = cls.createNamespace("app-namespace");
 
 // Middleware to generate or retrieve correlation IDs

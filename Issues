@@ -1,0 +1,3 @@
+# ISSUES
+Docker being unable to fetch users, but if we run the application in local it's working without any errors.
+In ci/cd pipelines, everything is running perfectly fine, the images are being built but the code is not being pushed to heroku so we are manually pushing it using digitalocean droplet.

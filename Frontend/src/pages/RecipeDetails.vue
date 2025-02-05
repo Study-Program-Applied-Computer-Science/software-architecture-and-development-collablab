@@ -49,48 +49,48 @@ export default {
     return {
       recipe: {},
       defaultImage: "https://via.placeholder.com/400",
-      viewLogged: false, // ✅ Prevent duplicate logging
+      viewLogged: false, 
     };
   },
 
   async created() {
     const recipeId = this.$route.params.id;
     if (!recipeId) {
-      console.error("❌ Missing recipe ID");
+      console.error("Missing recipe ID");
       return;
     }
 
     try {
-      // ✅ Fetch Recipe Details
+      //Fetch Recipe Details
       const response = await apiClient.get(`/${recipeId}`);
       this.recipe = response.data;
 
-      // ✅ Ensure user is logged in before logging view
+      // Ensure user is logged in before logging view
       const token = localStorage.getItem("authToken");
       if (token && !this.viewLogged) {
         this.logRecipeView(recipeId, token);
       } else {
-        console.warn("⚠️ User not logged in - Skipping view log");
+        console.warn(" User not logged in - Skipping view log");
       }
     } catch (error) {
-      console.error("❌ Error fetching recipe details:", error);
+      console.error(" Error fetching recipe details:", error);
     }
   },
 
   methods: {
     async logRecipeView(recipeId, token) {
       try {
-        console.log("📌 Logging view for recipe:", recipeId);
+        console.log("Logging view for recipe:", recipeId);
         const response = await analyticsClient.post(
           "/log-view",
           { recipeId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("✅ Successfully logged view:", response.data);
+        console.log(" Successfully logged view:", response.data);
 
-        this.viewLogged = true; // ✅ Prevent multiple logs
+        this.viewLogged = true; // Prevent multiple logs
       } catch (error) {
-        console.error("❌ Failed to log view:", error.response?.data || error);
+        console.error("Failed to log view:", error.response?.data || error);
       }
     },
   },
