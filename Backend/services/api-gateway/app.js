@@ -5,7 +5,7 @@ const rateLimit = require("express-rate-limit");
 const path = require("path");
 const dotenv = require("dotenv");
 const logger = require("../../services/logging"); 
-const { correlationIdMiddleware } = require("../../services/correlationId"); 
+const { correlationIdMiddleware, getCorrelationId } = require("../../services/correlationId"); 
 
 // Swagger dependencies
 const swaggerJsdoc = require("swagger-jsdoc");
