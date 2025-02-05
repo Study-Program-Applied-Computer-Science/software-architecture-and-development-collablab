@@ -46,7 +46,7 @@ const swaggerOptions = {
     },
     security: [{ bearerAuth: [] }],
   },
-  apis: [absoluteApisPath], // Use the absolute path here
+  apis: [absoluteApisPath], 
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

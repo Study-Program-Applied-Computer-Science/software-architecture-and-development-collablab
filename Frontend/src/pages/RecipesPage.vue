@@ -88,7 +88,7 @@ export default {
 .recipes-page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensures the page takes the full viewport height */
+  min-height: 100vh; 
   padding: 40px;
 }
 
@@ -101,13 +101,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px; /* Space between dropdown and search bar */
-  margin: 30px auto; /* Centered with some margin */
+  gap: 20px; 
+  margin: 30px auto; 
 }
 
 .filter-dropdown select {
   padding: 10px;
-  border: 1px solid #f6a300; /* Orange border */
+  border: 1px solid #f6a300; 
   border-radius: 40px;
   font-size: 16px;
   background-color: white;
@@ -127,7 +127,7 @@ export default {
 .search-bar {
   display: flex;
   align-items: center;
-  border: 1px solid #f6a300; /* Orange border */
+  border: 1px solid #f6a300; 
   border-radius: 40px;
   overflow: hidden;
   background-color: white;
@@ -140,8 +140,7 @@ export default {
   padding: 10px 15px;
   font-size: 16px;
   outline: none;
-  flex: 1; /* Fills the available space */
-}
+  flex: 1; }
 
 .search-btn {
   display: flex;
@@ -163,10 +162,10 @@ export default {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-evenly;
-  flex-grow: 1; /* Pushes the footer down */
+  flex-grow: 1; 
 }
 
-/* Ensures footer stays at the bottom */
+
 footer {
   margin-top: auto;
 }

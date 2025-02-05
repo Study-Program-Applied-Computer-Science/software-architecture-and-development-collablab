@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!-- Navbar is now outside the add-recipe div -->
-    <Navbar />
+        <Navbar />
     <div class="add-recipe">
       <div class="form-container">
         <h4 class="form-title">{{ isEditing ? "Edit Recipe" : "Add a New Recipe" }}</h4>
@@ -183,7 +182,6 @@ handleFileUpload(event) {
 </script>
 
 <style scoped>
-/* Navbar-specific styles can be added in Navbar.vue if required */
 
 .add-recipe {
   display: flex;

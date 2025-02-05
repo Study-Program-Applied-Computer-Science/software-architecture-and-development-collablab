@@ -28,7 +28,7 @@ const esTransport = (appName) => {
       ...logData,
       timestamp: logData.timestamp || new Date().toISOString(),
       correlationId: getCorrelationId() || "N/A",
-      appName, // Add additional metadata if needed
+      appName, 
     }),
   };
   return transporter;
