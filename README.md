@@ -1,6 +1,6 @@
 # Software Architecture and Development CollabLab
 
-This repository is created by GitHub Classroom for the software architecture and development collab lab.
+This repository is created by GitHub Classroom for the Software Architecture and Development CollabLab
 
 Recipe Management System - Cooking Assistant
 
@@ -13,29 +13,24 @@ Users can create, view, edit, and delete their own recipes.
 
 Admins can manage user accounts and generate analytics reports.
 
-Features
+Key Features:
+User Authentication & Authorization (JWT-based)
+Recipe Management (CRUD operations)
+Smart Pantry Management (ingredient search and suggestions)
+Analytics Dashboard
+User Management
+API Gateway for centralized microservices communication
+Role-Based Access Control (RBAC)
 
-✅ User Authentication & Authorization (Sign-up, Login, JWT-based authentication)
-✅ Recipe Management (CRUD operations: Create, Read, Update, Delete recipes)
-✅ Smart Pantry Management (ingredient search and suggestions)
-✅ Analytics Dashboard (Admins can generate reports & track recipe views)
-✅ User Management (Admins can view and delete users)
-✅ API Gateway for Centralized Microservices Communication
-✅ Role-Based Access Control (RBAC) using JWT Tokens
-
-Technologies Used
-
-The system is built using the following technologies:
-
-Vue.js - Frontend (User Interface) , 
-Node.js & Express - Backend (API & Microservices) , 
-MongoDB - Database (NoSQL) , 
-Axios - HTTP Requests , 
-Multer - Image Uploads , 
-Docker - Containerization , 
-JWT (JSON Web Token) - Authentication , 
-CORS - Secure API Communication , 
-Swagger - API Documentation 
+Technologies Used:
+Vue.js for the frontend
+Node.js & Express for the backend
+MongoDB for the database
+Axios for HTTP requests
+Docker for containerization
+JWT for authentication
+CORS for secure API communication
+Swagger for API documentation
 
 🛠️ Microservices Architecture
 
@@ -166,9 +161,33 @@ npm run serve
 7️⃣ Open the Application
 
 Once all services are running, open: 
-http://localhost:8080
+http://localhost:5006
 
+Running the Application with Docker Compose
 
-📜 License
+Clone the Repository:
 
-This project is not licensed.
+sh
+git clone https://github.com/Study-Program-Applied-Computer-Science/software-architecture-and-development-collablab.git
+cd software-architecture-and-development-collablab
+
+Ensure Docker and Docker Compose are installed: Make sure Docker and Docker Compose are installed on your machine. You can download them from Docker's official website.
+
+Navigate to Backend/services Directory: Change the directory to Backend/services where the docker-compose.yml file is located:
+
+sh
+cd Backend/services
+
+Build and Start the Services: Run the following command to build and start all the services defined in the docker-compose.yml file:
+
+sh
+docker-compose up --build
+Access the Application: Once all services are running, open your browser and navigate to:
+
+Code
+http://localhost:5006
+Stopping the Services: To stop the services, press Ctrl+C in the terminal where docker-compose is running, or use the following command:
+
+sh
+docker-compose down
+These steps will enable you to run the entire application stack using Docker Compose.
