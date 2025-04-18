@@ -6,7 +6,7 @@ Recipe Management System - Cooking Assistant
 
 This repository contains the Recipe Management System, a full-stack web application built using a Microservices Architecture. The system allows users to create, view, edit, and delete recipes, while admins can manage users and analyze application usage.
 
-App Introduction
+App Introduction:
 
 The Recipe Management System is designed using a Microservices Architecture, allowing for scalability, flexibility, and better maintenance. It follows a role-based access control (RBAC) mechanism, where:
 Users can create, view, edit, and delete their own recipes.
